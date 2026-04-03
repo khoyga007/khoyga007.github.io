@@ -844,35 +844,51 @@ document.getElementById('searchInput').addEventListener('keydown', function(e) {
 });
 
 // ── WEATHER ──
+async function fetchWeatherByCoords(lat, lon, locationName) {
+  const body = document.getElementById('weatherBody');
+  const wRes = await fetch(
+    'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+    '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&wind_speed_unit=kmh'
+  );
+  const w = await wRes.json();
+  const c = w.current;
+  body.innerHTML =
+    '<div class="weather-main">' +
+      '<span class="weather-icon">' + weatherIcon(c.weather_code) + '</span>' +
+      '<div class="weather-temp">' + Math.round(c.temperature_2m) + '°C</div>' +
+      '<div class="weather-desc">' + weatherDesc(c.weather_code) + '</div>' +
+      '<div class="weather-location">📍 ' + locationName + '</div>' +
+    '</div>' +
+    '<div class="neon-divider"></div>' +
+    '<div class="weather-details">' +
+      '<div class="weather-detail"><div class="weather-detail-label">💧 Độ ẩm</div><div class="weather-detail-value">' + c.relative_humidity_2m + '%</div></div>' +
+      '<div class="weather-detail"><div class="weather-detail-label">💨 Gió</div><div class="weather-detail-value">' + Math.round(c.wind_speed_10m) + ' km/h</div></div>' +
+    '</div>';
+}
+
 async function loadWeather() {
   const body = document.getElementById('weatherBody');
+  body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:13px;">Đang tải...</div>';
   try {
-    const locRes = await fetch('https://ipapi.co/json/');
-    const loc = await locRes.json();
-    const lat = loc.latitude, lon = loc.longitude, city = loc.city, country = loc.country_name;
-
-    const wRes = await fetch(
-      'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
-      '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&wind_speed_unit=kmh'
-    );
-    const w = await wRes.json();
-    const c = w.current;
-    const icon = weatherIcon(c.weather_code);
-    const desc = weatherDesc(c.weather_code);
-
-    body.innerHTML =
-      '<div class="weather-main">' +
-        '<span class="weather-icon">' + icon + '</span>' +
-        '<div class="weather-temp">' + Math.round(c.temperature_2m) + '°C</div>' +
-        '<div class="weather-desc">' + desc + '</div>' +
-        '<div class="weather-location">📍 ' + city + ', ' + country + '</div>' +
-      '</div>' +
-      '<div class="neon-divider"></div>' +
-      '<div class="weather-details">' +
-        '<div class="weather-detail"><div class="weather-detail-label">💧 Độ ẩm</div><div class="weather-detail-value">' + c.relative_humidity_2m + '%</div></div>' +
-        '<div class="weather-detail"><div class="weather-detail-label">💨 Gió</div><div class="weather-detail-value">' + Math.round(c.wind_speed_10m) + ' km/h</div></div>' +
-      '</div>';
-  } catch (e) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async function(pos) {
+          try {
+            await fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude, 'Vị trí của bạn');
+          } catch(e) {
+            body.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:13px;">Không thể tải thời tiết</div>';
+          }
+        },
+        async function() {
+          // Fallback: Hà Nội
+          try { await fetchWeatherByCoords(21.0285, 105.8542, 'Hà Nội, Việt Nam'); }
+          catch(e) { body.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:13px;">Không thể tải thời tiết</div>'; }
+        }
+      );
+    } else {
+      await fetchWeatherByCoords(21.0285, 105.8542, 'Hà Nội, Việt Nam');
+    }
+  } catch(e) {
     body.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:13px;">Không thể tải thời tiết</div>';
   }
 }
