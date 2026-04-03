@@ -68,6 +68,59 @@
     radial-gradient(ellipse at 80% 20%, rgba(0,173,181,0.06) 0%, transparent 50%);
   --font-heading: 'Orbitron', monospace; --font-body: 'Rajdhani', sans-serif;
 }
+[data-theme="grunge"] {
+  --bg: #1c1a14; --bg2: #252218; --card: rgba(37,34,24,0.9);
+  --border: #8b7355; --cyan: #c49a6c; --magenta: #b5651d;
+  --green: #7a8c4a; --purple: #9b7a6b; --yellow: #d4a843;
+  --text: #d4cdb8; --text-dim: #7a7260;
+  --glow-cyan: 0 0 4px #c49a6c44; --glow-magenta: 0 0 4px #b5651d44; --glow-green: 0 0 4px #7a8c4a44;
+  --radius: 4px; --header-bg: rgba(28,26,20,0.97);
+  --bg-gradient: radial-gradient(ellipse at 30% 40%, rgba(196,154,108,0.05) 0%, transparent 60%);
+  --font-heading: 'Georgia', serif; --font-body: 'Courier New', monospace;
+}
+[data-theme="cyberpunk"] {
+  --bg: #0d0d0d; --bg2: #111111; --card: rgba(17,17,17,0.92);
+  --border: #ffe600; --cyan: #ffe600; --magenta: #ff0055;
+  --green: #00ffcc; --purple: #ff00aa; --yellow: #ffe600;
+  --text: #f0f0f0; --text-dim: #888888;
+  --glow-cyan: 0 0 10px #ffe600, 0 0 30px #ffe60066; --glow-magenta: 0 0 10px #ff0055, 0 0 30px #ff005566; --glow-green: 0 0 10px #00ffcc, 0 0 30px #00ffcc66;
+  --radius: 2px; --header-bg: rgba(13,13,13,0.98);
+  --bg-gradient: radial-gradient(ellipse at 15% 50%, rgba(255,230,0,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 50%, rgba(255,0,85,0.06) 0%, transparent 50%);
+  --font-heading: 'Orbitron', monospace; --font-body: 'Rajdhani', sans-serif;
+}
+[data-theme="aesthetic"] {
+  --bg: #1a0533; --bg2: #2d1050; --card: rgba(45,16,80,0.85);
+  --border: #ff71ce; --cyan: #ff71ce; --magenta: #b967ff;
+  --green: #05ffa1; --purple: #fffb96; --yellow: #fffb96;
+  --text: #ffe8f9; --text-dim: #bb88cc;
+  --glow-cyan: 0 0 10px #ff71ce, 0 0 30px #ff71ce55; --glow-magenta: 0 0 10px #b967ff, 0 0 30px #b967ff55; --glow-green: 0 0 10px #05ffa1, 0 0 30px #05ffa155;
+  --radius: 16px; --header-bg: rgba(26,5,51,0.95);
+  --bg-gradient: radial-gradient(ellipse at 30% 20%, rgba(255,113,206,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(185,103,255,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(5,255,161,0.04) 0%, transparent 60%);
+  --font-heading: 'Orbitron', monospace; --font-body: 'Rajdhani', sans-serif;
+}
+[data-theme="minimalist"] {
+  --bg: #f5f5f5; --bg2: #eeeeee; --card: rgba(255,255,255,0.97);
+  --border: #222222; --cyan: #222222; --magenta: #555555;
+  --green: #2a6e2a; --purple: #444444; --yellow: #b8860b;
+  --text: #111111; --text-dim: #888888;
+  --glow-cyan: none; --glow-magenta: none; --glow-green: none;
+  --radius: 4px; --header-bg: rgba(245,245,245,0.98);
+  --bg-gradient: none;
+  --font-heading: 'Segoe UI', Arial, sans-serif; --font-body: 'Segoe UI', Arial, sans-serif;
+}
+[data-theme="popcomic"] {
+  --bg: #fff9c4; --bg2: #fff176; --card: rgba(255,255,255,0.97);
+  --border: #000000; --cyan: #0d47a1; --magenta: #b71c1c;
+  --green: #1b5e20; --purple: #4a148c; --yellow: #f57f17;
+  --text: #000000; --text-dim: #444444;
+  --glow-cyan: 3px 3px 0 #000000; --glow-magenta: 3px 3px 0 #000000; --glow-green: 3px 3px 0 #000000;
+  --radius: 0px; --header-bg: rgba(255,249,196,0.98);
+  --bg-gradient: none;
+  --font-heading: 'Georgia', serif; --font-body: 'Arial', sans-serif;
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
@@ -389,6 +442,11 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
           <button class="theme-option" data-theme="classic" onclick="setTheme('classic')"><span class="theme-dot" style="background:linear-gradient(135deg,#f5f0e8,#3a6ea5)"></span> Classic</button>
           <button class="theme-option" data-theme="futurama" onclick="setTheme('futurama')"><span class="theme-dot" style="background:linear-gradient(135deg,#0a0020,#7b2fff)"></span> Futurama</button>
           <button class="theme-option" data-theme="classic-future" onclick="setTheme('classic-future')"><span class="theme-dot" style="background:linear-gradient(135deg,#1a1a2e,#e94560)"></span> Classic Future</button>
+          <button class="theme-option" data-theme="grunge" onclick="setTheme('grunge')"><span class="theme-dot" style="background:linear-gradient(135deg,#1c1a14,#c49a6c)"></span> Grunge</button>
+          <button class="theme-option" data-theme="cyberpunk" onclick="setTheme('cyberpunk')"><span class="theme-dot" style="background:linear-gradient(135deg,#0d0d0d,#ffe600)"></span> Cyberpunk</button>
+          <button class="theme-option" data-theme="aesthetic" onclick="setTheme('aesthetic')"><span class="theme-dot" style="background:linear-gradient(135deg,#1a0533,#ff71ce)"></span> Aesthetic</button>
+          <button class="theme-option" data-theme="minimalist" onclick="setTheme('minimalist')"><span class="theme-dot" style="background:linear-gradient(135deg,#f5f5f5,#222222)"></span> Minimalist</button>
+          <button class="theme-option" data-theme="popcomic" onclick="setTheme('popcomic')"><span class="theme-dot" style="background:linear-gradient(135deg,#fff9c4,#b71c1c)"></span> Pop Comic</button>
         </div>
       </div>
     </div>
