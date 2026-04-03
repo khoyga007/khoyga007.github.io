@@ -1,0 +1,1208 @@
+<!-- ✍ Written by Claire -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yang's Space</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root, [data-theme="neon-dark"] {
+  --bg: #070714;
+  --bg2: #0d0d1f;
+  --card: rgba(13, 13, 35, 0.85);
+  --border: #00f0ff;
+  --cyan: #00f0ff;
+  --magenta: #ff00de;
+  --green: #00ff88;
+  --purple: #bf00ff;
+  --yellow: #ffe600;
+  --text: #d0d0ff;
+  --text-dim: #7070aa;
+  --glow-cyan: 0 0 8px #00f0ff, 0 0 20px #00f0ff44;
+  --glow-magenta: 0 0 8px #ff00de, 0 0 20px #ff00de44;
+  --glow-green: 0 0 8px #00ff88, 0 0 20px #00ff8844;
+  --radius: 12px;
+  --header-bg: rgba(7, 7, 20, 0.9);
+  --bg-gradient: radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 0, 222, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(191, 0, 255, 0.03) 0%, transparent 70%);
+  --font-heading: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+[data-theme="vintage"] {
+  --bg: #2b1d0e;
+  --bg2: #3a2a14;
+  --card: rgba(58, 42, 20, 0.9);
+  --border: #c9a96e;
+  --cyan: #c9a96e;
+  --magenta: #d4764e;
+  --green: #8faa6b;
+  --purple: #9e7bb5;
+  --yellow: #e6c34d;
+  --text: #f0e6d2;
+  --text-dim: #a89070;
+  --glow-cyan: 0 0 6px #c9a96e44;
+  --glow-magenta: 0 0 6px #d4764e44;
+  --glow-green: 0 0 6px #8faa6b44;
+  --radius: 6px;
+  --header-bg: rgba(43, 29, 14, 0.95);
+  --bg-gradient: radial-gradient(ellipse at 30% 30%, rgba(201, 169, 110, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 70%, rgba(212, 118, 78, 0.04) 0%, transparent 60%);
+  --font-heading: 'Georgia', serif;
+  --font-body: 'Georgia', serif;
+}
+
+[data-theme="classic"] {
+  --bg: #f5f0e8;
+  --bg2: #e8e0d0;
+  --card: rgba(255, 255, 255, 0.9);
+  --border: #3a6ea5;
+  --cyan: #3a6ea5;
+  --magenta: #c0392b;
+  --green: #27ae60;
+  --purple: #8e44ad;
+  --yellow: #f39c12;
+  --text: #2c3e50;
+  --text-dim: #7f8c8d;
+  --glow-cyan: 0 0 4px #3a6ea522;
+  --glow-magenta: 0 0 4px #c0392b22;
+  --glow-green: 0 0 4px #27ae6022;
+  --radius: 8px;
+  --header-bg: rgba(245, 240, 232, 0.95);
+  --bg-gradient: none;
+  --font-heading: 'Segoe UI', Tahoma, sans-serif;
+  --font-body: 'Segoe UI', Tahoma, sans-serif;
+}
+
+[data-theme="futurama"] {
+  --bg: #0a0020;
+  --bg2: #120035;
+  --card: rgba(18, 0, 53, 0.85);
+  --border: #7b2fff;
+  --cyan: #7b2fff;
+  --magenta: #ff2d95;
+  --green: #00e5ff;
+  --purple: #b44dff;
+  --yellow: #ffea00;
+  --text: #e0d0ff;
+  --text-dim: #8866bb;
+  --glow-cyan: 0 0 10px #7b2fff, 0 0 30px #7b2fff55;
+  --glow-magenta: 0 0 10px #ff2d95, 0 0 30px #ff2d9555;
+  --glow-green: 0 0 10px #00e5ff, 0 0 30px #00e5ff55;
+  --radius: 16px;
+  --header-bg: rgba(10, 0, 32, 0.92);
+  --bg-gradient: radial-gradient(ellipse at 25% 25%, rgba(123, 47, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 75%, rgba(255, 45, 149, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
+  --font-heading: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+[data-theme="classic-future"] {
+  --bg: #1a1a2e;
+  --bg2: #16213e;
+  --card: rgba(22, 33, 62, 0.9);
+  --border: #e94560;
+  --cyan: #e94560;
+  --magenta: #0f3460;
+  --green: #00adb5;
+  --purple: #533483;
+  --yellow: #f8b500;
+  --text: #eaeaea;
+  --text-dim: #8888a0;
+  --glow-cyan: 0 0 8px #e9456066;
+  --glow-magenta: 0 0 8px #0f346066;
+  --glow-green: 0 0 8px #00adb566;
+  --radius: 10px;
+  --header-bg: rgba(26, 26, 46, 0.93);
+  --bg-gradient: radial-gradient(ellipse at 20% 80%, rgba(233, 69, 96, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 173, 181, 0.06) 0%, transparent 50%);
+  --font-heading: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--bg-gradient);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 28px;
+  background: var(--header-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid color-mix(in srgb, var(--cyan) 20%, transparent);
+  box-shadow: 0 2px 30px color-mix(in srgb, var(--cyan) 8%, transparent);
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  letter-spacing: 4px;
+  white-space: nowrap;
+}
+
+.logo-accent { color: var(--magenta); text-shadow: var(--glow-magenta); }
+
+.search-bar { display: flex; gap: 8px; width: 360px; }
+
+.search-bar input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-bar input:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+.search-bar select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.search-bar button {
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.search-bar button:hover { box-shadow: var(--glow-cyan); transform: scale(1.05); }
+
+.header-right { display: flex; flex-direction: column; align-items: flex-end; }
+
+.clock {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: var(--glow-green);
+  letter-spacing: 2px;
+}
+
+.date-display { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+
+.theme-switcher {
+  position: relative;
+  margin-top: 4px;
+}
+
+.theme-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent);
+  color: var(--cyan);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.theme-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+.theme-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: #1a1a2e;
+  border: 1px solid #00f0ff;
+  border-radius: 8px;
+  padding: 6px;
+  display: none;
+  min-width: 160px;
+  box-shadow: 0 0 12px #00f0ff44, 0 10px 40px rgba(0,0,0,0.6);
+  z-index: 200;
+}
+
+.theme-menu.show { display: block; }
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #d0d0ff;
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: sans-serif;
+}
+
+.theme-option:hover { background: rgba(255,255,255,0.1); color: #ffffff; }
+.theme-option.active { color: #00f0ff; font-weight: 700; }
+
+.theme-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 16px;
+  padding: 20px 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.widget {
+  background: var(--card);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.widget:hover {
+  border-color: rgba(0, 240, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  background: rgba(0, 240, 255, 0.04);
+}
+
+.widget-header h3 {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.widget-icon { font-size: 1rem; }
+.widget-body { padding: 14px; }
+
+.weather-widget { grid-row: span 2; }
+
+.weather-main { text-align: center; padding: 10px 0; }
+.weather-icon { font-size: 3.5rem; display: block; margin-bottom: 4px; }
+
+.weather-temp {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.weather-desc { color: var(--text-dim); font-size: 13px; margin-top: 4px; text-transform: capitalize; }
+.weather-location { color: var(--magenta); font-size: 12px; margin-top: 2px; text-shadow: var(--glow-magenta); }
+
+.weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+
+.weather-detail {
+  background: rgba(0,240,255,0.05);
+  border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.weather-detail-label { font-size: 11px; color: var(--text-dim); }
+.weather-detail-value { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+.links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+.link-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.link-item:hover {
+  border-color: var(--cyan);
+  background: rgba(0,240,255,0.07);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-cyan);
+}
+
+.link-favicon { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; }
+
+.link-favicon-fallback {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: rgba(0,240,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
+.link-name {
+  font-size: 11px; color: var(--text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  width: 100%; text-align: center;
+}
+
+.link-delete {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(255,0,0,0.6); border: none; color: white;
+  width: 16px; height: 16px; border-radius: 50%;
+  font-size: 10px; cursor: pointer;
+  display: none; align-items: center; justify-content: center; line-height: 1;
+}
+
+.link-item:hover .link-delete { display: flex; }
+
+.add-link-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 10px 6px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(0,240,255,0.2);
+  border-radius: 10px; color: var(--text-dim);
+  cursor: pointer; transition: all 0.2s; font-size: 11px;
+}
+
+.add-link-tile:hover { border-color: var(--cyan); color: var(--cyan); }
+.add-link-tile span:first-child { font-size: 20px; }
+
+.todo-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.todo-input-row input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,240,255,0.2);
+  border-radius: 8px; padding: 7px 12px;
+  color: var(--text); font-family: var(--font-body);
+  font-size: 14px; outline: none; transition: all 0.2s;
+}
+
+.todo-input-row input:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+.todo-input-row button {
+  background: var(--green); color: var(--bg);
+  border: none; border-radius: 8px; padding: 7px 14px;
+  font-weight: 700; cursor: pointer; font-size: 16px; transition: all 0.2s;
+}
+
+.todo-input-row button:hover { box-shadow: var(--glow-green); }
+.todo-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
+
+.todo-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 8px; transition: all 0.2s;
+}
+
+.todo-item:hover { border-color: rgba(0,240,255,0.3); }
+.todo-item input[type="checkbox"] { accent-color: var(--cyan); width: 16px; height: 16px; cursor: pointer; }
+.todo-item label { flex: 1; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.todo-item.done label { text-decoration: line-through; color: var(--text-dim); }
+
+.todo-del {
+  background: none; border: none; color: var(--text-dim);
+  cursor: pointer; font-size: 14px; opacity: 0; transition: all 0.2s;
+}
+
+.todo-item:hover .todo-del { opacity: 1; color: #ff4444; }
+
+.notes-widget textarea {
+  width: 100%; height: 200px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 8px; padding: 10px;
+  color: var(--text); font-family: var(--font-body);
+  font-size: 14px; resize: vertical; outline: none;
+  transition: border-color 0.2s; line-height: 1.6;
+}
+
+.notes-widget textarea:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.notes-widget textarea::placeholder { color: var(--text-dim); }
+.notes-status { font-size: 11px; color: var(--text-dim); margin-top: 6px; text-align: right; }
+
+.youtube-widget { grid-column: span 3; }
+.yt-inner { display: grid; grid-template-columns: 1fr 280px; gap: 14px; }
+
+.yt-controls { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.yt-controls input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,0,222,0.3);
+  border-radius: 8px; padding: 8px 12px;
+  color: var(--text); font-family: var(--font-body);
+  font-size: 14px; outline: none; transition: all 0.2s;
+}
+
+.yt-controls input:focus { border-color: var(--magenta); box-shadow: var(--glow-magenta); }
+
+.yt-controls button {
+  background: var(--magenta); color: white;
+  border: none; border-radius: 8px; padding: 8px 16px;
+  font-weight: 700; cursor: pointer; font-size: 14px;
+  white-space: nowrap; transition: all 0.2s;
+}
+
+.yt-controls button:hover { box-shadow: var(--glow-magenta); }
+
+#yt-frame-container {
+  background: #000; border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(255,0,222,0.2);
+  aspect-ratio: 16/9; width: 100%;
+}
+
+#yt-frame-container iframe { width: 100%; height: 100%; border: none; display: block; }
+
+.yt-playlist-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+
+.yt-playlist-header span {
+  font-family: var(--font-heading); font-size: 0.7rem;
+  color: var(--magenta); letter-spacing: 2px;
+}
+
+.yt-playlist-clear {
+  background: none; border: 1px solid rgba(255,0,222,0.3);
+  color: var(--text-dim); border-radius: 6px;
+  padding: 3px 8px; font-size: 11px; cursor: pointer; transition: all 0.2s;
+}
+
+.yt-playlist-clear:hover { border-color: var(--magenta); color: var(--magenta); }
+.playlist-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
+
+.playlist-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,0,222,0.1);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s;
+}
+
+.playlist-item:hover { border-color: var(--magenta); background: rgba(255,0,222,0.07); }
+.playlist-item.active { border-color: var(--magenta); box-shadow: var(--glow-magenta); }
+
+.playlist-thumb { width: 44px; height: 30px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+
+.playlist-title {
+  flex: 1; font-size: 12px; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; color: var(--text);
+}
+
+.playlist-del {
+  background: none; border: none; color: var(--text-dim);
+  cursor: pointer; font-size: 12px; opacity: 0; transition: opacity 0.2s; flex-shrink: 0;
+}
+
+.playlist-item:hover .playlist-del { opacity: 1; color: #ff4444; }
+.playlist-empty { color: var(--text-dim); font-size: 13px; text-align: center; padding: 20px; }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--bg2); border: 1px solid var(--cyan);
+  border-radius: var(--radius); padding: 24px; width: 380px;
+  box-shadow: var(--glow-cyan), 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modal h3 {
+  font-family: var(--font-heading); font-size: 0.85rem;
+  color: var(--cyan); letter-spacing: 2px; margin-bottom: 16px;
+}
+
+.modal input {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,240,255,0.3); border-radius: 8px;
+  padding: 10px 14px; color: var(--text);
+  font-family: var(--font-body); font-size: 14px;
+  outline: none; margin-bottom: 10px; transition: all 0.2s;
+}
+
+.modal input:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.modal input::placeholder { color: var(--text-dim); }
+.modal-buttons { display: flex; gap: 10px; margin-top: 6px; }
+
+.modal-buttons button {
+  flex: 1; padding: 10px; border-radius: 8px; border: none;
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 14px; cursor: pointer; transition: all 0.2s;
+}
+
+.btn-confirm { background: var(--cyan); color: var(--bg); }
+.btn-confirm:hover { box-shadow: var(--glow-cyan); }
+.btn-cancel { background: rgba(255,255,255,0.08); color: var(--text); }
+.btn-cancel:hover { background: rgba(255,255,255,0.12); }
+
+.neon-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
+  margin: 4px 0; opacity: 0.4;
+}
+
+.weather-widget { grid-column: 1; grid-row: 1 / 3; }
+.links-widget   { grid-column: 2 / 4; grid-row: 1; }
+.todo-widget    { grid-column: 2; grid-row: 2; }
+.notes-widget   { grid-column: 3; grid-row: 2; }
+.youtube-widget { grid-column: 1 / 4; grid-row: 3; }
+
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 8px #00f0ff, 0 0 20px #00f0ff44; }
+  50% { text-shadow: 0 0 14px #00f0ff, 0 0 40px #00f0ff88; }
+}
+
+.clock { animation: pulse-glow 3s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.widget { animation: fadeIn 0.4s ease both; }
+.weather-widget { animation-delay: 0.05s; }
+.links-widget   { animation-delay: 0.1s; }
+.todo-widget    { animation-delay: 0.15s; }
+.notes-widget   { animation-delay: 0.2s; }
+.youtube-widget { animation-delay: 0.25s; }
+
+@media (max-width: 1000px) {
+  .main { grid-template-columns: 1fr 1fr; }
+  .weather-widget, .links-widget, .youtube-widget { grid-column: 1 / 3; grid-row: auto; }
+  .todo-widget { grid-column: 1; grid-row: auto; }
+  .notes-widget { grid-column: 2; grid-row: auto; }
+  .yt-inner { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .search-bar { width: 100%; max-width: 420px; }
+  .header-right { align-items: center; }
+}
+
+@media (max-width: 600px) {
+  .search-bar { width: 100%; max-width: 100%; }
+  .main { grid-template-columns: 1fr; padding: 12px; }
+  .weather-widget, .links-widget, .todo-widget, .notes-widget, .youtube-widget {
+    grid-column: 1; grid-row: auto;
+  }
+  .links-grid { grid-template-columns: repeat(4, 1fr); }
+}
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <h1 class="logo">YANG<span class="logo-accent">'S SPACE</span></h1>
+    </div>
+    <div class="header-center">
+      <div class="search-bar">
+        <select id="searchEngine">
+          <option value="google">Google</option>
+          <option value="youtube">YouTube</option>
+          <option value="github">GitHub</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+        <button onclick="doSearch()">&#x2315;</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="date-display" id="date-display"></div>
+      <div class="theme-switcher">
+        <button class="theme-btn" onclick="toggleThemeMenu()">&#127912; Theme</button>
+        <div class="theme-menu" id="themeMenu">
+          <button class="theme-option active" data-theme="neon-dark" onclick="setTheme('neon-dark')">
+            <span class="theme-dot" style="background:linear-gradient(135deg,#070714,#00f0ff)"></span> Neon Dark
+          </button>
+          <button class="theme-option" data-theme="vintage" onclick="setTheme('vintage')">
+            <span class="theme-dot" style="background:linear-gradient(135deg,#2b1d0e,#c9a96e)"></span> Vintage
+          </button>
+          <button class="theme-option" data-theme="classic" onclick="setTheme('classic')">
+            <span class="theme-dot" style="background:linear-gradient(135deg,#f5f0e8,#3a6ea5)"></span> Classic
+          </button>
+          <button class="theme-option" data-theme="futurama" onclick="setTheme('futurama')">
+            <span class="theme-dot" style="background:linear-gradient(135deg,#0a0020,#7b2fff)"></span> Futurama
+          </button>
+          <button class="theme-option" data-theme="classic-future" onclick="setTheme('classic-future')">
+            <span class="theme-dot" style="background:linear-gradient(135deg,#1a1a2e,#e94560)"></span> Classic Future
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="main">
+    <div class="widget weather-widget">
+      <div class="widget-header">
+        <span class="widget-icon">&#127780;</span>
+        <h3>Thời tiết</h3>
+      </div>
+      <div class="widget-body" id="weatherBody">
+        <div style="text-align:center;padding:30px;color:var(--text-dim)">Đang tải...</div>
+      </div>
+    </div>
+
+    <div class="widget links-widget">
+      <div class="widget-header">
+        <span class="widget-icon">&#128279;</span>
+        <h3>Link nhanh</h3>
+      </div>
+      <div class="widget-body">
+        <div class="links-grid" id="linksGrid"></div>
+      </div>
+    </div>
+
+    <div class="widget todo-widget">
+      <div class="widget-header">
+        <span class="widget-icon">&#9989;</span>
+        <h3>Todo</h3>
+      </div>
+      <div class="widget-body">
+        <div class="todo-input-row">
+          <input type="text" id="todoInput" placeholder="Thêm việc cần làm...">
+          <button onclick="addTodo()">+</button>
+        </div>
+        <div class="todo-list" id="todoList"></div>
+      </div>
+    </div>
+
+    <div class="widget notes-widget">
+      <div class="widget-header">
+        <span class="widget-icon">&#128221;</span>
+        <h3>Ghi chú</h3>
+      </div>
+      <div class="widget-body">
+        <textarea id="notes" placeholder="Ghi chú nhanh..."></textarea>
+        <div class="notes-status" id="noteStatus"></div>
+      </div>
+    </div>
+
+    <div class="widget youtube-widget">
+      <div class="widget-header">
+        <span class="widget-icon">&#127925;</span>
+        <h3>Music Player</h3>
+      </div>
+      <div class="widget-body">
+        <div class="yt-inner">
+          <div class="yt-player-area">
+            <div class="yt-controls">
+              <input type="text" id="ytInput" placeholder="Dán link YouTube vào đây...">
+              <button onclick="loadYT()">&#9654; Phát</button>
+            </div>
+            <div id="yt-frame-container"></div>
+          </div>
+          <div class="yt-playlist-panel">
+            <div class="yt-playlist-header">
+              <span>PLAYLIST</span>
+              <button class="yt-playlist-clear" onclick="clearPlaylist()">Xóa hết</button>
+            </div>
+            <div class="playlist-list" id="playlistItems"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Link Modal -->
+  <div class="modal-overlay" id="linkModal">
+    <div class="modal">
+      <h3>Thêm Link</h3>
+      <input type="text" id="modal-link-name" placeholder="Tên (ví dụ: Facebook)">
+      <input type="text" id="modal-link-url" placeholder="URL (ví dụ: facebook.com)">
+      <input type="text" id="modal-link-emoji" placeholder="Emoji (mặc định: 🔗)">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="hideModal('linkModal')">Hủy</button>
+        <button class="btn-confirm" onclick="confirmAddLink()">Thêm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+// ✍ Written by Claire
+
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clock').textContent = hh + ':' + mm + ':' + ss;
+
+  const days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+  const d = days[now.getDay()] + ', ' + now.getDate() + '/' + (now.getMonth()+1) + '/' + now.getFullYear();
+  document.getElementById('date-display').textContent = d;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── SEARCH ──
+const searchEngines = {
+  google: 'https://www.google.com/search?q=',
+  youtube: 'https://www.youtube.com/results?search_query=',
+  github: 'https://github.com/search?q=',
+  duckduckgo: 'https://duckduckgo.com/?q=',
+};
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  const engine = document.getElementById('searchEngine').value;
+  if (!q) return;
+  window.open(searchEngines[engine] + encodeURIComponent(q), '_blank');
+  document.getElementById('searchInput').value = '';
+}
+
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doSearch();
+});
+
+// ── WEATHER ──
+async function loadWeather() {
+  const body = document.getElementById('weatherBody');
+  try {
+    const locRes = await fetch('https://ipapi.co/json/');
+    const loc = await locRes.json();
+    const lat = loc.latitude, lon = loc.longitude, city = loc.city, country = loc.country_name;
+
+    const wRes = await fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+      '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&wind_speed_unit=kmh'
+    );
+    const w = await wRes.json();
+    const c = w.current;
+    const icon = weatherIcon(c.weather_code);
+    const desc = weatherDesc(c.weather_code);
+
+    body.innerHTML =
+      '<div class="weather-main">' +
+        '<span class="weather-icon">' + icon + '</span>' +
+        '<div class="weather-temp">' + Math.round(c.temperature_2m) + '°C</div>' +
+        '<div class="weather-desc">' + desc + '</div>' +
+        '<div class="weather-location">📍 ' + city + ', ' + country + '</div>' +
+      '</div>' +
+      '<div class="neon-divider"></div>' +
+      '<div class="weather-details">' +
+        '<div class="weather-detail"><div class="weather-detail-label">💧 Độ ẩm</div><div class="weather-detail-value">' + c.relative_humidity_2m + '%</div></div>' +
+        '<div class="weather-detail"><div class="weather-detail-label">💨 Gió</div><div class="weather-detail-value">' + Math.round(c.wind_speed_10m) + ' km/h</div></div>' +
+      '</div>';
+  } catch (e) {
+    body.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:13px;">Không thể tải thời tiết</div>';
+  }
+}
+
+function weatherIcon(code) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '🌤️';
+  if (code <= 3) return '☁️';
+  if (code <= 48) return '🌫️';
+  if (code <= 57) return '🌦️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌧️';
+  if (code <= 86) return '🌨️';
+  if (code <= 99) return '⛈️';
+  return '🌡️';
+}
+
+function weatherDesc(code) {
+  if (code === 0) return 'Trời quang';
+  if (code <= 2) return 'Ít mây';
+  if (code <= 3) return 'Nhiều mây';
+  if (code <= 48) return 'Sương mù';
+  if (code <= 57) return 'Mưa phùn';
+  if (code <= 67) return 'Có mưa';
+  if (code <= 77) return 'Tuyết rơi';
+  if (code <= 82) return 'Mưa rào';
+  if (code <= 86) return 'Mưa tuyết';
+  if (code <= 99) return 'Giông bão';
+  return 'Không rõ';
+}
+
+loadWeather();
+setInterval(loadWeather, 10 * 60 * 1000);
+
+// ── LINKS ──
+var DEFAULT_LINKS = [
+  { name: 'GitHub', url: 'https://github.com/khoyga007', emoji: '🐙' },
+  { name: 'YouTube', url: 'https://youtube.com', emoji: '▶️' },
+  { name: 'Google', url: 'https://google.com', emoji: '🔍' },
+  { name: 'Reddit', url: 'https://reddit.com', emoji: '🤖' },
+  { name: 'Steam', url: 'https://store.steampowered.com', emoji: '🎮' },
+  { name: 'Gmail', url: 'https://mail.google.com', emoji: '📧' },
+  { name: 'Discord', url: 'https://discord.com/app', emoji: '💬' },
+  { name: 'Twitter/X', url: 'https://x.com', emoji: '🐦' },
+  { name: 'Spotify', url: 'https://open.spotify.com', emoji: '🎵' },
+];
+
+function getLinks() {
+  return JSON.parse(localStorage.getItem('yang_links') || JSON.stringify(DEFAULT_LINKS));
+}
+
+function saveLinks(links) {
+  localStorage.setItem('yang_links', JSON.stringify(links));
+}
+
+function renderLinks() {
+  var links = getLinks();
+  var container = document.getElementById('linksGrid');
+  container.innerHTML = '';
+
+  links.forEach(function(link, i) {
+    var div = document.createElement('div');
+    div.className = 'link-item';
+    div.onclick = function(e) {
+      if (e.target.classList.contains('link-delete')) return;
+      window.open(link.url, '_blank');
+    };
+
+    var hostname = '';
+    try { hostname = new URL(link.url).hostname; } catch(e) {}
+    var faviconUrl = 'https://www.google.com/s2/favicons?domain=' + hostname + '&sz=32';
+    div.innerHTML =
+      '<img class="link-favicon" src="' + faviconUrl + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" alt="">' +
+      '<div class="link-favicon-fallback" style="display:none">' + (link.emoji || '🔗') + '</div>' +
+      '<span class="link-name">' + escHtml(link.name) + '</span>' +
+      '<button class="link-delete" onclick="deleteLink(' + i + ')">✕</button>';
+    container.appendChild(div);
+  });
+
+  var addTile = document.createElement('div');
+  addTile.className = 'add-link-tile';
+  addTile.onclick = showAddLinkModal;
+  addTile.innerHTML = '<span>+</span><span>Thêm link</span>';
+  container.appendChild(addTile);
+}
+
+function deleteLink(i) {
+  var links = getLinks();
+  links.splice(i, 1);
+  saveLinks(links);
+  renderLinks();
+}
+
+function showAddLinkModal() {
+  document.getElementById('modal-link-name').value = '';
+  document.getElementById('modal-link-url').value = '';
+  document.getElementById('modal-link-emoji').value = '';
+  showModal('linkModal');
+}
+
+function confirmAddLink() {
+  var name = document.getElementById('modal-link-name').value.trim();
+  var url = document.getElementById('modal-link-url').value.trim();
+  var emoji = document.getElementById('modal-link-emoji').value.trim() || '🔗';
+  if (!name || !url) return;
+  if (url.indexOf('http') !== 0) url = 'https://' + url;
+  var links = getLinks();
+  links.push({ name: name, url: url, emoji: emoji });
+  saveLinks(links);
+  renderLinks();
+  hideModal('linkModal');
+}
+
+renderLinks();
+
+// ── TODO ──
+function getTodos() {
+  return JSON.parse(localStorage.getItem('yang_todos') || '[]');
+}
+
+function saveTodos(todos) {
+  localStorage.setItem('yang_todos', JSON.stringify(todos));
+}
+
+function renderTodos() {
+  var todos = getTodos();
+  var list = document.getElementById('todoList');
+  list.innerHTML = '';
+
+  todos.forEach(function(todo, i) {
+    var div = document.createElement('div');
+    div.className = 'todo-item' + (todo.done ? ' done' : '');
+    var id = 'todo-' + i;
+    div.innerHTML =
+      '<input type="checkbox" id="' + id + '" ' + (todo.done ? 'checked' : '') + ' onchange="toggleTodo(' + i + ')">' +
+      '<label for="' + id + '">' + escHtml(todo.text) + '</label>' +
+      '<button class="todo-del" onclick="deleteTodo(' + i + ')">✕</button>';
+    list.appendChild(div);
+  });
+}
+
+function addTodo() {
+  var input = document.getElementById('todoInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var todos = getTodos();
+  todos.unshift({ text: text, done: false });
+  saveTodos(todos);
+  renderTodos();
+  input.value = '';
+}
+
+function toggleTodo(i) {
+  var todos = getTodos();
+  todos[i].done = !todos[i].done;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteTodo(i) {
+  var todos = getTodos();
+  todos.splice(i, 1);
+  saveTodos(todos);
+  renderTodos();
+}
+
+document.getElementById('todoInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addTodo();
+});
+
+renderTodos();
+
+// ── NOTES ──
+var notesEl = document.getElementById('notes');
+var noteStatus = document.getElementById('noteStatus');
+notesEl.value = localStorage.getItem('yang_notes') || '';
+var noteTimeout;
+
+notesEl.addEventListener('input', function() {
+  clearTimeout(noteTimeout);
+  noteStatus.textContent = 'Đang lưu...';
+  noteTimeout = setTimeout(function() {
+    localStorage.setItem('yang_notes', notesEl.value);
+    noteStatus.textContent = 'Đã lưu ✓';
+    setTimeout(function() { noteStatus.textContent = ''; }, 2000);
+  }, 800);
+});
+
+// ── YOUTUBE ──
+var playlist = JSON.parse(localStorage.getItem('yang_playlist') || '[]');
+var currentIdx = -1;
+
+function savePlaylist() {
+  localStorage.setItem('yang_playlist', JSON.stringify(playlist));
+}
+
+function extractYTId(input) {
+  input = input.trim();
+  var patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (var j = 0; j < patterns.length; j++) {
+    var m = input.match(patterns[j]);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+async function loadYT() {
+  var input = document.getElementById('ytInput').value.trim();
+  if (!input) return;
+  var id = extractYTId(input);
+  if (!id) { alert('URL YouTube không hợp lệ!'); return; }
+
+  var title = id;
+  try {
+    var res = await fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json');
+    var data = await res.json();
+    title = data.title;
+  } catch(e) {}
+
+  if (!playlist.find(function(p) { return p.id === id; })) {
+    playlist.push({ id: id, title: title, thumb: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' });
+    savePlaylist();
+  }
+
+  playVideo(playlist.findIndex(function(p) { return p.id === id; }));
+  document.getElementById('ytInput').value = '';
+}
+
+function playVideo(idx) {
+  if (idx < 0 || idx >= playlist.length) return;
+  currentIdx = idx;
+  var video = playlist[idx];
+  var container = document.getElementById('yt-frame-container');
+  container.innerHTML = '<iframe src="https://www.youtube.com/embed/' + video.id + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+  renderPlaylist();
+}
+
+function renderPlaylist() {
+  var list = document.getElementById('playlistItems');
+  if (playlist.length === 0) {
+    list.innerHTML = '<div class="playlist-empty">Chưa có video nào.<br>Dán link YouTube vào ô trên!</div>';
+    return;
+  }
+  var html = '';
+  playlist.forEach(function(v, i) {
+    html += '<div class="playlist-item ' + (i === currentIdx ? 'active' : '') + '" onclick="playVideo(' + i + ')">' +
+      '<img class="playlist-thumb" src="' + v.thumb + '" alt="">' +
+      '<span class="playlist-title">' + escHtml(v.title) + '</span>' +
+      '<button class="playlist-del" onclick="removeFromPlaylist(event,' + i + ')">✕</button>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function removeFromPlaylist(e, i) {
+  e.stopPropagation();
+  playlist.splice(i, 1);
+  if (currentIdx === i) {
+    currentIdx = -1;
+    document.getElementById('yt-frame-container').innerHTML = '';
+  } else if (currentIdx > i) {
+    currentIdx--;
+  }
+  savePlaylist();
+  renderPlaylist();
+}
+
+function clearPlaylist() {
+  if (!confirm('Xóa toàn bộ playlist?')) return;
+  playlist = [];
+  currentIdx = -1;
+  document.getElementById('yt-frame-container').innerHTML = '';
+  savePlaylist();
+  renderPlaylist();
+}
+
+document.getElementById('ytInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') loadYT();
+});
+
+renderPlaylist();
+
+// ── MODAL ──
+function showModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+
+function hideModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    if (e.target === el) el.classList.remove('show');
+  });
+});
+
+// ── THEME ──
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('yang_theme', theme);
+  document.querySelectorAll('.theme-option').forEach(function(el) {
+    el.classList.toggle('active', el.getAttribute('data-theme') === theme);
+  });
+  document.getElementById('themeMenu').classList.remove('show');
+}
+
+function toggleThemeMenu() {
+  document.getElementById('themeMenu').classList.toggle('show');
+}
+
+// Close theme menu when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.theme-switcher')) {
+    document.getElementById('themeMenu').classList.remove('show');
+  }
+});
+
+// Load saved theme
+var savedTheme = localStorage.getItem('yang_theme') || 'neon-dark';
+setTheme(savedTheme);
+
+// ── UTIL ──
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+  </script>
+</body>
+</html>
