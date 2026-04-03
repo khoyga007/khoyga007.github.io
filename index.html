@@ -623,7 +623,67 @@ body::before {
 .links-widget   { grid-column: 2 / 4; grid-row: 1; }
 .todo-widget    { grid-column: 2; grid-row: 2; }
 .notes-widget   { grid-column: 3; grid-row: 2; }
-.youtube-widget { grid-column: 1 / 4; grid-row: 3; }
+.crypto-widget  { grid-column: 1 / 4; grid-row: 3; }
+.youtube-widget { grid-column: 1 / 4; grid-row: 4; }
+
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.coin-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.coin-card:hover {
+  border-color: rgba(0,240,255,0.35);
+  background: rgba(0,240,255,0.05);
+}
+
+.coin-icon { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
+
+.coin-info { flex: 1; min-width: 0; }
+
+.coin-name {
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coin-price {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.coin-change {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.coin-change.up { color: #00ff88; }
+.coin-change.down { color: #ff4466; }
+
+.crypto-updated {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: right;
+  margin-top: 8px;
+}
 
 @keyframes pulse-glow {
   0%, 100% { text-shadow: 0 0 8px #00f0ff, 0 0 20px #00f0ff44; }
@@ -762,6 +822,19 @@ body::before {
       <div class="widget-body">
         <textarea id="notes" placeholder="Ghi chú nhanh..."></textarea>
         <div class="notes-status" id="noteStatus"></div>
+      </div>
+    </div>
+
+    <div class="widget crypto-widget">
+      <div class="widget-header">
+        <span class="widget-icon">₿</span>
+        <h3>Crypto</h3>
+        <span id="cryptoUpdated" style="font-size:11px;color:var(--text-dim);font-family:sans-serif;font-weight:normal;letter-spacing:0"></span>
+      </div>
+      <div class="widget-body">
+        <div class="crypto-grid" id="cryptoGrid">
+          <div style="color:var(--text-dim);font-size:13px">Đang tải...</div>
+        </div>
       </div>
     </div>
 
@@ -1189,6 +1262,49 @@ document.querySelectorAll('.modal-overlay').forEach(function(el) {
     if (e.target === el) el.classList.remove('show');
   });
 });
+
+// ── CRYPTO ──
+var COINS = [
+  'bitcoin','ethereum','binancecoin','solana','ripple',
+  'cardano','dogecoin','toncoin','shiba-inu','polkadot'
+];
+
+async function loadCrypto() {
+  var grid = document.getElementById('cryptoGrid');
+  try {
+    var url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=' +
+      COINS.join(',') + '&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h';
+    var res = await fetch(url);
+    var data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Invalid data');
+
+    grid.innerHTML = data.map(function(c) {
+      var change = c.price_change_percentage_24h || 0;
+      var changeClass = change >= 0 ? 'up' : 'down';
+      var changeSign = change >= 0 ? '+' : '';
+      var price = c.current_price >= 1
+        ? '$' + c.current_price.toLocaleString('en-US', {maximumFractionDigits: 2})
+        : '$' + c.current_price.toFixed(6);
+      return '<div class="coin-card">' +
+        '<img class="coin-icon" src="' + c.image + '" alt="' + c.symbol + '">' +
+        '<div class="coin-info">' +
+          '<div class="coin-name">' + c.name + ' <span style="opacity:.5">' + c.symbol.toUpperCase() + '</span></div>' +
+          '<div class="coin-price">' + price + '</div>' +
+          '<div class="coin-change ' + changeClass + '">' + changeSign + change.toFixed(2) + '%</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var now = new Date();
+    document.getElementById('cryptoUpdated').textContent =
+      'Cập nhật ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  } catch(e) {
+    grid.innerHTML = '<div style="color:var(--text-dim);font-size:13px">Không thể tải dữ liệu crypto</div>';
+  }
+}
+
+loadCrypto();
+setInterval(loadCrypto, 2 * 60 * 1000); // refresh mỗi 2 phút
 
 // ── THEME ──
 function setTheme(theme) {
