@@ -1,0 +1,43 @@
+<!-- ✍ Written by Claire -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a3e"/>
+      <stop offset="100%" stop-color="#0d0d1a"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="outer-glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg)" stroke="#7b2ff7" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Outer purple glow ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#7b2ff7" stroke-width="3" opacity="0.3" filter="url(#outer-glow)"/>
+
+  <!-- Letter Y - neon cyan with glow -->
+  <g filter="url(#glow)">
+    <!-- Left arm of Y -->
+    <line x1="16" y1="14" x2="32" y2="34" stroke="#00e5ff" stroke-width="5.5" stroke-linecap="round"/>
+    <!-- Right arm of Y -->
+    <line x1="48" y1="14" x2="32" y2="34" stroke="#00e5ff" stroke-width="5.5" stroke-linecap="round"/>
+    <!-- Stem of Y -->
+    <line x1="32" y1="34" x2="32" y2="52" stroke="#00e5ff" stroke-width="5.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Accent dot at center junction - magenta -->
+  <circle cx="32" cy="34" r="3.5" fill="#ff2d78" filter="url(#glow)"/>
+</svg>
