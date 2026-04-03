@@ -374,6 +374,33 @@ body::before {
 .weather-detail-label { font-size: 11px; color: var(--text-dim); }
 .weather-detail-value { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
 
+.weather-details { grid-template-columns: 1fr 1fr 1fr; }
+
+.forecast-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 4px;
+}
+
+.forecast-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,240,255,0.08);
+  border-radius: 8px;
+}
+
+.forecast-label { font-size: 11px; color: var(--text-dim); }
+.forecast-icon { font-size: 1.3rem; line-height: 1; }
+.forecast-temps { display: flex; gap: 4px; font-size: 12px; }
+.forecast-max { color: var(--text); font-weight: 700; }
+.forecast-min { color: var(--text-dim); }
+
 .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
 .link-item {
@@ -921,10 +948,29 @@ async function fetchWeatherByCoords(lat, lon, locationName) {
   const body = document.getElementById('weatherBody');
   const wRes = await fetch(
     'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
-    '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&wind_speed_unit=kmh'
+    '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,apparent_temperature' +
+    '&daily=weather_code,temperature_2m_max,temperature_2m_min&wind_speed_unit=kmh&timezone=auto'
   );
   const w = await wRes.json();
   const c = w.current;
+  const daily = w.daily;
+
+  const days = ['CN','T2','T3','T4','T5','T6','T7'];
+  var forecastHtml = '';
+  for (var i = 1; i <= 5; i++) {
+    var date = new Date(daily.time[i]);
+    var dayLabel = i === 1 ? 'Ngày mai' : days[date.getDay()];
+    forecastHtml +=
+      '<div class="forecast-day">' +
+        '<div class="forecast-label">' + dayLabel + '</div>' +
+        '<div class="forecast-icon">' + weatherIcon(daily.weather_code[i]) + '</div>' +
+        '<div class="forecast-temps">' +
+          '<span class="forecast-max">' + Math.round(daily.temperature_2m_max[i]) + '°</span>' +
+          '<span class="forecast-min">' + Math.round(daily.temperature_2m_min[i]) + '°</span>' +
+        '</div>' +
+      '</div>';
+  }
+
   body.innerHTML =
     '<div class="weather-main">' +
       '<span class="weather-icon">' + weatherIcon(c.weather_code) + '</span>' +
@@ -936,7 +982,10 @@ async function fetchWeatherByCoords(lat, lon, locationName) {
     '<div class="weather-details">' +
       '<div class="weather-detail"><div class="weather-detail-label">💧 Độ ẩm</div><div class="weather-detail-value">' + c.relative_humidity_2m + '%</div></div>' +
       '<div class="weather-detail"><div class="weather-detail-label">💨 Gió</div><div class="weather-detail-value">' + Math.round(c.wind_speed_10m) + ' km/h</div></div>' +
-    '</div>';
+      '<div class="weather-detail"><div class="weather-detail-label">🌡️ Cảm giác</div><div class="weather-detail-value">' + Math.round(c.apparent_temperature) + '°C</div></div>' +
+    '</div>' +
+    '<div class="neon-divider" style="margin-top:12px"></div>' +
+    '<div class="forecast-row">' + forecastHtml + '</div>';
 }
 
 async function loadWeather() {
