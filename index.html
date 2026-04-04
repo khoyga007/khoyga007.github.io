@@ -863,23 +863,24 @@ var _FX = (function() {
 
   // ---- DRAW ----
   function draw() {
+    cx.clearRect(0, 0, W, H);
+    if (!themeFx && !ambFx) return;
+
     if (themeFx === 'matrix') {
-      // trail: fade canvas with semi-transparent black instead of clearing
-      cx.fillStyle = 'rgba(0,0,0,0.18)';
-      cx.fillRect(0, 0, W, H);
       cx.font = '13px monospace';
       cols.forEach(function(c) {
-        // head character — bright white/cyan
-        cx.fillStyle = 'rgba(220,255,255,0.95)';
-        cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, c.y);
-        // one character below head in brighter cyan
-        cx.fillStyle = 'rgba(0,240,255,0.7)';
-        cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, c.y + 18);
+        for (var i = 0; i < c.len; i++) {
+          var iy = c.y - i * 18;
+          if (iy < -18 || iy > H + 18) continue;
+          var alpha = i === 0 ? 0.95 : (1 - i / c.len) * 0.55;
+          cx.fillStyle = i === 0
+            ? 'rgba(220,255,255,' + alpha + ')'
+            : 'rgba(0,240,255,' + alpha + ')';
+          cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, iy);
+        }
       });
       return;
     }
-    cx.clearRect(0, 0, W, H);
-    if (!themeFx && !ambFx) return;
 
     // Grain
     if (themeFx === 'grain') {
