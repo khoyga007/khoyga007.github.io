@@ -742,42 +742,42 @@ var _FX = (function() {
   function spawnTheme() {
     switch (themeFx) {
       case 'streaks':
-        if (tp.length < 55 && Math.random() < 0.35) {
+        if (tp.length < 60 && Math.random() < 0.5) {
           var c = Math.random() > 0.5 ? '#ff2d78' : '#00f0ff';
-          tp.push({ x: -200, y: Math.random() * H, vx: 350 + Math.random() * 350, vy: 0,
-            len: 80 + Math.random() * 250, life: 1, decay: 0.018 + Math.random() * 0.012,
+          tp.push({ x: Math.random() * W * 0.3, y: Math.random() * H, vx: 500 + Math.random() * 600, vy: 0,
+            len: 120 + Math.random() * 280, life: 1, decay: 0.012 * dt * 60,
             color: c, type: 'streak' });
         } break;
       case 'orbs':
-        if (tp.length < 35 && Math.random() < 0.06) {
+        if (tp.length < 40 && Math.random() < 0.12) {
           var c = Math.random() > 0.5 ? '#00f0ff' : '#a855f7';
           tp.push({ x: Math.random() * W, y: Math.random() * H,
-            vx: (Math.random()-0.5)*18, vy: (Math.random()-0.5)*18,
-            r: 3 + Math.random() * 6, life: 1, decay: 0.002 + Math.random() * 0.004,
+            vx: (Math.random()-0.5)*25, vy: (Math.random()-0.5)*25,
+            r: 8 + Math.random() * 12, life: 1, decay: 0.003 * dt * 60,
             color: c, type: 'orb' });
         } break;
       case 'dust':
-        if (tp.length < 90 && Math.random() < 0.55) {
-          tp.push({ x: Math.random() * W, y: -5, vx: (Math.random()-0.5)*25, vy: 6 + Math.random() * 18,
-            r: 1 + Math.random() * 2.5, life: 1, decay: 0.0015 + Math.random() * 0.003, type: 'dust' });
+        if (tp.length < 100 && Math.random() < 0.7) {
+          tp.push({ x: Math.random() * W, y: -5, vx: (Math.random()-0.5)*30, vy: 8 + Math.random() * 22,
+            r: 2 + Math.random() * 3, life: 1, decay: 0.002 * dt * 60, type: 'dust' });
         } break;
       case 'petals':
-        if (tp.length < 45 && Math.random() < 0.12) {
-          tp.push({ x: Math.random() * W, y: -20, vx: (Math.random()-0.5)*35, vy: 22 + Math.random() * 45,
-            r: 5 + Math.random() * 7, life: 1, decay: 0.0018, rot: Math.random()*Math.PI*2,
+        if (tp.length < 55 && Math.random() < 0.18) {
+          tp.push({ x: Math.random() * W, y: -20, vx: (Math.random()-0.5)*40, vy: 25 + Math.random() * 50,
+            r: 7 + Math.random() * 9, life: 1, decay: 0.002 * dt * 60, rot: Math.random()*Math.PI*2,
             rotV: (Math.random()-0.5)*2.5, type: 'petal' });
         } break;
       case 'dots':
-        if (tp.length < 30 && Math.random() < 0.04) {
-          tp.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random()-0.5)*10,
-            vy: (Math.random()-0.5)*10, r: 1 + Math.random() * 2, life: 1, decay: 0.001, type: 'dot' });
+        if (tp.length < 50 && Math.random() < 0.15) {
+          tp.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random()-0.5)*15,
+            vy: (Math.random()-0.5)*15, r: 2 + Math.random() * 3, life: 1, decay: 0.002 * dt * 60, type: 'dot' });
         } break;
       case 'stars':
-        if (tp.length < 55 && Math.random() < 0.22) {
+        if (tp.length < 60 && Math.random() < 0.3) {
           var cs = ['#ff3b8f','#ff9f1c','#2ec4b6','#e71d36','#fcf300'];
           tp.push({ x: Math.random() * W, y: Math.random() * H,
-            vx: (Math.random()-0.5)*70, vy: (Math.random()-0.5)*70,
-            r: 4 + Math.random() * 7, life: 1, decay: 0.007 + Math.random() * 0.01,
+            vx: (Math.random()-0.5)*90, vy: (Math.random()-0.5)*90,
+            r: 5 + Math.random() * 9, life: 1, decay: 0.012 * dt * 60,
             color: cs[Math.floor(Math.random()*cs.length)], type: 'star' });
         } break;
     }
@@ -908,34 +908,37 @@ var _FX = (function() {
         case 'streak': {
           var gr = cx.createLinearGradient(p.x, p.y, p.x - p.len, p.y);
           gr.addColorStop(0, p.color); gr.addColorStop(1, 'transparent');
-          cx.globalAlpha = a * 0.65; cx.strokeStyle = gr; cx.lineWidth = 1.5;
+          cx.globalAlpha = a * 0.9; cx.strokeStyle = gr; cx.lineWidth = 2.5;
+          cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x - p.len, p.y); cx.stroke();
+          // glow
+          cx.lineWidth = 6; cx.globalAlpha = a * 0.2;
           cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x - p.len, p.y); cx.stroke();
         } break;
         case 'orb': {
-          var gr = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
-          gr.addColorStop(0, p.color); gr.addColorStop(1, 'transparent');
-          cx.globalAlpha = a * 0.4; cx.fillStyle = gr;
-          cx.beginPath(); cx.arc(p.x, p.y, p.r * 5, 0, Math.PI*2); cx.fill();
+          var gr = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+          gr.addColorStop(0, p.color); gr.addColorStop(0.3, p.color); gr.addColorStop(1, 'transparent');
+          cx.globalAlpha = a * 0.75; cx.fillStyle = gr;
+          cx.beginPath(); cx.arc(p.x, p.y, p.r * 4, 0, Math.PI*2); cx.fill();
         } break;
         case 'dust': {
-          cx.globalAlpha = a * 0.35;
-          cx.fillStyle = 'rgba(160,130,90,1)';
+          cx.globalAlpha = a * 0.65;
+          cx.fillStyle = 'rgba(190,160,110,1)';
           cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI*2); cx.fill();
         } break;
         case 'petal': {
           cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot);
-          cx.globalAlpha = a * 0.5;
+          cx.globalAlpha = a * 0.8;
           cx.fillStyle = 'rgba(255,170,210,1)';
           cx.beginPath(); cx.ellipse(0, 0, p.r, p.r * 0.45, 0, 0, Math.PI*2); cx.fill();
           cx.restore();
         } break;
         case 'dot': {
-          cx.globalAlpha = a * 0.18;
+          cx.globalAlpha = a * 0.55;
           cx.fillStyle = 'rgba(200,200,220,1)';
           cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI*2); cx.fill();
         } break;
         case 'star': {
-          cx.globalAlpha = a * 0.6; cx.fillStyle = p.color;
+          cx.globalAlpha = a * 0.9; cx.fillStyle = p.color;
           cx.beginPath();
           for (var j = 0; j < 5; j++) {
             var ang = j * 4 * Math.PI / 5 - Math.PI / 2;
