@@ -643,6 +643,11 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
                 <button class="ambient-btn" id="amb-ocean" onclick="toggleAmbient('ocean')">🌊 Biển</button>
                 <button class="ambient-btn" id="amb-forest" onclick="toggleAmbient('forest')">🌿 Rừng</button>
                 <button class="ambient-btn" id="amb-cafe" onclick="toggleAmbient('cafe')">☕ Cà phê</button>
+                <button class="ambient-btn" id="amb-fire" onclick="toggleAmbient('fire')">🔥 Lửa</button>
+                <button class="ambient-btn" id="amb-wind" onclick="toggleAmbient('wind')">🌬️ Gió</button>
+                <button class="ambient-btn" id="amb-night" onclick="toggleAmbient('night')">🌙 Đêm</button>
+                <button class="ambient-btn" id="amb-train" onclick="toggleAmbient('train')">🚂 Tàu</button>
+                <button class="ambient-btn" id="amb-white" onclick="toggleAmbient('white')">📻 Trắng</button>
                 <input type="range" class="ambient-vol" id="ambientVol" min="0" max="100" value="40" oninput="setAmbientVol(this.value)" title="Âm lượng">
               </div>
             </div>
@@ -1379,8 +1384,43 @@ function toggleAmbient(type) {
     var bp = ambCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 0.4;
     var lp2 = ambCtx.createBiquadFilter(); lp2.type = 'lowpass'; lp2.frequency.value = 3000;
     ambSource.connect(bp); bp.connect(lp2); lp2.connect(ambGain);
+  } else if (type === 'fire') {
+    // Low crackle: layered lowpass + slow LFO on gain
+    var lp = ambCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 600;
+    var lfo = ambCtx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.25;
+    var lfoG = ambCtx.createGain(); lfoG.gain.value = 0.15;
+    var crackle = ambCtx.createGain(); crackle.gain.value = 0.7;
+    lfo.connect(lfoG); lfoG.connect(crackle.gain); lfo.start();
+    ambSource.connect(lp); lp.connect(crackle); crackle.connect(ambGain);
+  } else if (type === 'wind') {
+    // Bandpass sweep with slow LFO on frequency
+    var bp = ambCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 700; bp.Q.value = 0.8;
+    var lfo = ambCtx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.07;
+    var lfoG = ambCtx.createGain(); lfoG.gain.value = 500;
+    lfo.connect(lfoG); lfoG.connect(bp.frequency); lfo.start();
+    var lp = ambCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2500;
+    ambSource.connect(bp); bp.connect(lp); lp.connect(ambGain);
+  } else if (type === 'night') {
+    // High bandpass (crickets-like) with fast tremolo
+    var bp = ambCtx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 4200; bp.Q.value = 3;
+    var bp2 = ambCtx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 6500; bp2.Q.value = 2;
+    var trem = ambCtx.createOscillator(); trem.type = 'sine'; trem.frequency.value = 18;
+    var tremG = ambCtx.createGain(); tremG.gain.value = 0.4;
+    var mix = ambCtx.createGain(); mix.gain.value = 0.6;
+    trem.connect(tremG); tremG.connect(mix.gain); trem.start();
+    ambSource.connect(bp); ambSource.connect(bp2);
+    bp.connect(mix); bp2.connect(mix); mix.connect(ambGain);
+  } else if (type === 'train') {
+    // Low rumble + rhythmic thump via LFO
+    var lp = ambCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 250;
+    var lfo = ambCtx.createOscillator(); lfo.type = 'square'; lfo.frequency.value = 2.8;
+    var lfoG = ambCtx.createGain(); lfoG.gain.value = 0.3;
+    var rumble = ambCtx.createGain(); rumble.gain.value = 0.5;
+    lfo.connect(lfoG); lfoG.connect(rumble.gain); lfo.start();
+    var hp = ambCtx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 40;
+    ambSource.connect(hp); hp.connect(lp); lp.connect(rumble); rumble.connect(ambGain);
   } else {
-    // cafe: pink noise direct
+    // white / cafe: noise direct
     ambSource.connect(ambGain);
   }
 
