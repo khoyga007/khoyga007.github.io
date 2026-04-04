@@ -778,23 +778,12 @@ var _FX = (function() {
             } else if (roll < 0.5) {
               // Vertical
               nx = cpx; ny = cpy + (Math.random() < 0.5 ? 1 : -1) * segLen;
-            } else if (roll < 0.75) {
+            } else {
               // Diagonal 45°
               var dy = (Math.random() < 0.5 ? 1 : -1);
               nx = cpx + dir * segLen * 0.7; ny = cpy + dy * segLen * 0.7;
-            } else {
-              // Curve
-              curve = true;
-              var bend = (Math.random() - 0.5) * segLen * 1.2;
-              nx = cpx + dir * segLen; ny = cpy + (Math.random() - 0.5) * segLen * 0.8;
-              cx1 = cpx + dir * segLen * 0.33; cy1 = cpy + bend * 0.5;
-              cx2 = cpx + dir * segLen * 0.66; cy2 = ny - bend * 0.3;
             }
-            if (curve) {
-              segs.push({ x1: cpx, y1: cpy, x2: nx, y2: ny, curve: true, cx1: cx1, cy1: cy1, cx2: cx2, cy2: cy2 });
-            } else {
-              segs.push({ x1: cpx, y1: cpy, x2: nx, y2: ny });
-            }
+            segs.push({ x1: cpx, y1: cpy, x2: nx, y2: ny });
             cpx = nx; cpy = ny;
             if (Math.random() < 0.3) dir = -dir; // occasionally reverse
           }
