@@ -759,23 +759,44 @@ var _FX = (function() {
     var d = Math.max(dt, 0.016);
     switch (themeFx) {
       case 'streaks':
-        // Circuit traces: generate paths with 90° turns
+        // Circuit traces: organic paths mixing straight, 45° diagonal, curves
         if (tp.length < 30 && Math.random() < 0.06) {
           var colors = ['#00f0ff','#ff2d78','#a855f7','#39ff14'];
           var c = colors[Math.floor(Math.random()*colors.length)];
-          // Build a path of segments (horizontal/vertical with right-angle turns)
           var sx = Math.random() < 0.5 ? -20 : W + 20;
           var sy = Math.random() * H;
-          var segs = []; var px = sx, py = sy;
-          var horiz = Math.abs(sx) < 10 || sx > W; // start direction
-          var segCount = 3 + Math.floor(Math.random() * 5);
+          var segs = []; var cpx = sx, cpy = sy;
+          var dir = sx < W/2 ? 1 : -1; // general flow direction
+          var segCount = 4 + Math.floor(Math.random() * 6);
           for (var si = 0; si < segCount; si++) {
-            var segLen = 60 + Math.random() * 200;
-            var nx, ny;
-            if (horiz) { nx = px + (sx < W/2 ? segLen : -segLen); ny = py; }
-            else { nx = px; ny = py + (Math.random() < 0.5 ? segLen : -segLen); }
-            segs.push({ x1: px, y1: py, x2: nx, y2: ny });
-            px = nx; py = ny; horiz = !horiz;
+            var segLen = 50 + Math.random() * 180;
+            var roll = Math.random();
+            var nx, ny, curve = false, cx1, cy1, cx2, cy2;
+            if (roll < 0.3) {
+              // Horizontal
+              nx = cpx + dir * segLen; ny = cpy;
+            } else if (roll < 0.5) {
+              // Vertical
+              nx = cpx; ny = cpy + (Math.random() < 0.5 ? 1 : -1) * segLen;
+            } else if (roll < 0.75) {
+              // Diagonal 45°
+              var dy = (Math.random() < 0.5 ? 1 : -1);
+              nx = cpx + dir * segLen * 0.7; ny = cpy + dy * segLen * 0.7;
+            } else {
+              // Curve
+              curve = true;
+              var bend = (Math.random() - 0.5) * segLen * 1.2;
+              nx = cpx + dir * segLen; ny = cpy + (Math.random() - 0.5) * segLen * 0.8;
+              cx1 = cpx + dir * segLen * 0.33; cy1 = cpy + bend * 0.5;
+              cx2 = cpx + dir * segLen * 0.66; cy2 = ny - bend * 0.3;
+            }
+            if (curve) {
+              segs.push({ x1: cpx, y1: cpy, x2: nx, y2: ny, curve: true, cx1: cx1, cy1: cy1, cx2: cx2, cy2: cy2 });
+            } else {
+              segs.push({ x1: cpx, y1: cpy, x2: nx, y2: ny });
+            }
+            cpx = nx; cpy = ny;
+            if (Math.random() < 0.3) dir = -dir; // occasionally reverse
           }
           tp.push({ segs: segs, life: 1, decay: 0.003 * d * 60, color: c,
             progress: 0, speed: 0.4 + Math.random() * 0.6, type: 'circuit',
@@ -1077,16 +1098,33 @@ var _FX = (function() {
       switch (p.type) {
         case 'circuit': {
           if (!p.segs) break;
+          // Estimate total path length
+          function segLength(s) {
+            if (s.curve) {
+              // Approximate bezier length with 10 subdivisions
+              var len=0, ppx=s.x1, ppy=s.y1;
+              for (var t=0.1;t<=1;t+=0.1) { var it=1-t;
+                var bx=it*it*it*s.x1+3*it*it*t*s.cx1+3*it*t*t*s.cx2+t*t*t*s.x2;
+                var by=it*it*it*s.y1+3*it*it*t*s.cy1+3*it*t*t*s.cy2+t*t*t*s.y2;
+                var ddx=bx-ppx,ddy=by-ppy; len+=Math.sqrt(ddx*ddx+ddy*ddy); ppx=bx;ppy=by;
+              } return len;
+            }
+            var dx=s.x2-s.x1,dy=s.y2-s.y1; return Math.sqrt(dx*dx+dy*dy);
+          }
           var totalLen = 0;
-          p.segs.forEach(function(s) { totalLen += Math.abs(s.x2-s.x1) + Math.abs(s.y2-s.y1); });
+          p.segs.forEach(function(s) { totalLen += segLength(s); });
           p.progress = Math.min(p.progress + p.speed * dt, 1);
           var drawLen = totalLen * p.progress;
           var drawn = 0;
           cx.globalCompositeOperation = 'lighter';
-          // Dim base trace
-          cx.globalAlpha = a * 0.12; cx.strokeStyle = p.color; cx.lineWidth = 1;
+          // Dim base trace (full path preview)
+          cx.globalAlpha = a * 0.1; cx.strokeStyle = p.color; cx.lineWidth = 0.8;
           cx.beginPath();
-          p.segs.forEach(function(s) { cx.moveTo(s.x1, s.y1); cx.lineTo(s.x2, s.y2); });
+          p.segs.forEach(function(s) {
+            cx.moveTo(s.x1, s.y1);
+            if (s.curve) cx.bezierCurveTo(s.cx1,s.cy1,s.cx2,s.cy2,s.x2,s.y2);
+            else cx.lineTo(s.x2, s.y2);
+          });
           cx.stroke();
           // Bright animated trace
           cx.globalAlpha = a * 0.7; cx.lineWidth = 1.5;
@@ -1094,17 +1132,30 @@ var _FX = (function() {
           var headX = p.segs[0].x1, headY = p.segs[0].y1;
           for (var si = 0; si < p.segs.length && drawn < drawLen; si++) {
             var s = p.segs[si];
-            var segLen = Math.abs(s.x2-s.x1) + Math.abs(s.y2-s.y1);
+            var sl = segLength(s);
             var remain = drawLen - drawn;
-            if (remain >= segLen) {
-              cx.moveTo(s.x1, s.y1); cx.lineTo(s.x2, s.y2);
+            if (remain >= sl) {
+              cx.moveTo(s.x1, s.y1);
+              if (s.curve) cx.bezierCurveTo(s.cx1,s.cy1,s.cx2,s.cy2,s.x2,s.y2);
+              else cx.lineTo(s.x2, s.y2);
               headX = s.x2; headY = s.y2;
-              drawn += segLen;
+              drawn += sl;
             } else {
-              var t = remain / segLen;
-              var ex = s.x1 + (s.x2-s.x1)*t, ey = s.y1 + (s.y2-s.y1)*t;
-              cx.moveTo(s.x1, s.y1); cx.lineTo(ex, ey);
-              headX = ex; headY = ey;
+              var t = remain / sl;
+              if (s.curve) {
+                // Partial bezier
+                var steps = Math.ceil(t * 20);
+                cx.moveTo(s.x1, s.y1);
+                for (var bi=1;bi<=steps;bi++) {
+                  var bt=bi/20, it=1-bt;
+                  headX=it*it*it*s.x1+3*it*it*bt*s.cx1+3*it*bt*bt*s.cx2+bt*bt*bt*s.x2;
+                  headY=it*it*it*s.y1+3*it*it*bt*s.cy1+3*it*bt*bt*s.cy2+bt*bt*bt*s.y2;
+                  cx.lineTo(headX, headY);
+                }
+              } else {
+                headX = s.x1 + (s.x2-s.x1)*t; headY = s.y1 + (s.y2-s.y1)*t;
+                cx.moveTo(s.x1, s.y1); cx.lineTo(headX, headY);
+              }
               drawn = drawLen;
             }
           }
