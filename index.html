@@ -785,6 +785,12 @@ var _FX = (function() {
             r: 5 + Math.random() * 9, life: 1, decay: 0.012 * dt * 60,
             color: cs[Math.floor(Math.random()*cs.length)], type: 'star' });
         } break;
+      case 'clouds':
+        if (tp.length < 18 && Math.random() < 0.04) {
+          tp.push({ x: -180, y: 60 + Math.random() * H * 0.6,
+            vx: 18 + Math.random() * 28, vy: (Math.random()-0.5)*5,
+            r: 45 + Math.random() * 60, life: 1, decay: 0.0008 * dt * 60, type: 'cloud' });
+        } break;
     }
   }
 
@@ -1008,6 +1014,14 @@ var _FX = (function() {
           cx.globalAlpha = a * 0.5; cx.fillStyle = 'rgba(255,255,255,1)';
           cx.fillRect(p.x, p.y, 1 + Math.random()*2, 1 + Math.random()*2);
         } break;
+        case 'cloud': {
+          cx.globalAlpha = a * 0.13;
+          var offsets = [{x:0,y:0,s:1},{x:p.r*0.55,y:-p.r*0.25,s:0.7},{x:-p.r*0.5,y:-p.r*0.2,s:0.65},{x:p.r*0.3,y:p.r*0.2,s:0.55},{x:-p.r*0.28,y:p.r*0.18,s:0.5}];
+          offsets.forEach(function(o) {
+            cx.beginPath(); cx.arc(p.x + o.x, p.y + o.y, p.r * o.s, 0, Math.PI*2);
+            cx.fillStyle = 'rgba(180,200,255,1)'; cx.fill();
+          });
+        } break;
       }
     }
     cx.globalAlpha = 1;
@@ -1018,7 +1032,7 @@ var _FX = (function() {
     'cyberpunk':'streaks', 'classic-future':'orbs',
     'grunge':'dust', 'aesthetic':'petals',
     'vintage':'grain', 'minimalist':'dots',
-    'popcomic':'stars', 'classic': null
+    'popcomic':'stars', 'classic':'clouds'
   };
   var AMBIENT_MAP = {
     'fire':'embers', 'rain':'raindrops', 'ocean':'bubbles',
