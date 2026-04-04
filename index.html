@@ -720,7 +720,7 @@ var _FX = (function() {
   function resetCols() {
     var cw = 20; cols = [];
     for (var i = 0; i < Math.floor(W / cw); i++)
-      cols.push({ x: i * cw + 10, y: -Math.random() * H * 2, spd: 40 + Math.random() * 80, len: 6 + Math.floor(Math.random() * 14) });
+      cols.push({ x: i * cw + 10, y: Math.random() * H, spd: 40 + Math.random() * 80, len: 8 + Math.floor(Math.random() * 14) });
   }
 
   function init() {
@@ -863,21 +863,23 @@ var _FX = (function() {
 
   // ---- DRAW ----
   function draw() {
-    cx.clearRect(0, 0, W, H);
-    if (!themeFx && !ambFx) return;
-
-    // Matrix
     if (themeFx === 'matrix') {
+      // trail: fade canvas with semi-transparent black instead of clearing
+      cx.fillStyle = 'rgba(0,0,0,0.18)';
+      cx.fillRect(0, 0, W, H);
       cx.font = '13px monospace';
       cols.forEach(function(c) {
-        for (var i = 0; i < c.len; i++) {
-          var y = c.y - i * 18; if (y < 0 || y > H) continue;
-          var a = (1 - i / c.len) * 0.45;
-          cx.fillStyle = i === 0 ? 'rgba(200,255,255,0.95)' : 'rgba(0,240,255,' + a + ')';
-          cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, y);
-        }
+        // head character — bright white/cyan
+        cx.fillStyle = 'rgba(220,255,255,0.95)';
+        cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, c.y);
+        // one character below head in brighter cyan
+        cx.fillStyle = 'rgba(0,240,255,0.7)';
+        cx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], c.x, c.y + 18);
       });
+      return;
     }
+    cx.clearRect(0, 0, W, H);
+    if (!themeFx && !ambFx) return;
 
     // Grain
     if (themeFx === 'grain') {
