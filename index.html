@@ -1015,7 +1015,7 @@ var _FX = (function() {
     'night':'fireflies', 'train':'speedlines', 'white':'static'
   };
 
-  document.addEventListener('DOMContentLoaded', init);
+  init();
 
   return {
     setTheme: function(t) { themeFx = THEME_MAP[t] || null; tp = []; },
