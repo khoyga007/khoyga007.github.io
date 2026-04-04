@@ -437,6 +437,44 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
   .weather-widget, .links-widget, .todo-widget, .notes-widget, .pomodoro-widget, .habit-widget, .calendar-widget, .crypto-widget, .youtube-widget { grid-column: 1 / -1; grid-row: auto; }
   .links-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* ── CYBERPUNK BG ── */
+#cp-scanline {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 9995;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
+  );
+  animation: cp-scan 10s linear infinite;
+}
+@keyframes cp-scan {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100px; }
+}
+#cp-vignette {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 9994;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+}
+#cp-skyline {
+  display: none;
+  position: fixed; bottom: 0; left: 0; width: 100%;
+  pointer-events: none; z-index: 9993;
+}
+[data-theme="cyberpunk"] #cp-scanline,
+[data-theme="cyberpunk"] #cp-vignette,
+[data-theme="cyberpunk"] #cp-skyline { display: block; }
+.cp-rain-btn {
+  display: none;
+  background: transparent; border: 1px solid rgba(255,230,0,0.3);
+  color: var(--text-dim); font-size: 11px; padding: 5px 10px;
+  border-radius: 6px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.cp-rain-btn:hover { border-color: #ffe600; color: #ffe600; }
+.cp-rain-btn.dense { border-color: #ff0055; color: #ff0055; }
+[data-theme="cyberpunk"] .cp-rain-btn { display: inline-flex; align-items: center; gap: 4px; }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -445,6 +483,9 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
 
   <canvas id="fx-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
   <canvas id="cursor-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10000;"></canvas>
+  <div id="cp-scanline"></div>
+  <div id="cp-vignette"></div>
+  <div id="cp-skyline"></div>
 
   <!-- HEADER -->
   <header class="header">
@@ -477,6 +518,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
       <button class="fx-toggle-btn" id="fxToggleBtn" onclick="toggleFX()" title="Bật/tắt hiệu ứng">✨ FX</button>
       <button class="layout-btn" id="layoutBtn" onclick="toggleLayoutMode()" title="Tùy chỉnh layout">⚙ Layout</button>
       <button class="layout-reset-btn" id="layoutResetBtn" onclick="resetLayout()" title="Về mặc định">↺ Reset</button>
+      <button class="cp-rain-btn" id="cpRainBtn" onclick="toggleCpRain()" title="Mật độ mưa neon">🌧 Sparse</button>
       <div class="theme-switcher">
         <button class="theme-btn" onclick="toggleThemeMenu()">&#127912; Theme</button>
         <div class="theme-menu" id="themeMenu">
@@ -838,6 +880,16 @@ var _FX = (function() {
           tp.push({ x: horiz ? 0 : pos, y: horiz ? pos : 0,
             vx: 0, vy: 0, len: horiz ? W : H, life: 1, decay: 0.0008*d*60,
             horiz: horiz, type: 'gridline' });
+        }
+        // Neon rain drops
+        var _rainMax = (typeof cpRainDensity !== 'undefined' && cpRainDensity === 'dense') ? 160 : 60;
+        var _rainRate = (typeof cpRainDensity !== 'undefined' && cpRainDensity === 'dense') ? 0.7 : 0.22;
+        if (tp.length < _rainMax && Math.random() < _rainRate) {
+          var _rc = Math.random() > 0.5 ? '#ffe600' : '#ff0055';
+          tp.push({ x: Math.random()*W, y: -30,
+            vx: 0, vy: 380 + Math.random()*280,
+            len: 12 + Math.random()*22, life: 1, decay: 0.006*d*60,
+            color: _rc, type: 'neonrain' });
         }
         break;
       case 'orbs':
@@ -1222,6 +1274,19 @@ var _FX = (function() {
           if (p.horiz) { cx.moveTo(0, p.y); cx.lineTo(W, p.y); }
           else { cx.moveTo(p.x, 0); cx.lineTo(p.x, H); }
           cx.stroke();
+        } break;
+        case 'neonrain': {
+          cx.globalCompositeOperation = 'lighter';
+          var rg = cx.createLinearGradient(p.x, p.y, p.x, p.y + p.len);
+          rg.addColorStop(0, 'rgba(0,0,0,0)');
+          rg.addColorStop(1, p.color);
+          cx.globalAlpha = a * 0.7;
+          cx.strokeStyle = rg;
+          cx.lineWidth = 1.5;
+          cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x, p.y + p.len);
+          cx.stroke();
+          glow(p.x, p.y + p.len, 4, p.color, a * 0.85);
+          cx.globalCompositeOperation = 'source-over';
         } break;
         case 'orb': {
           var pulse = (Math.sin(p.pulse)+1)/2;
@@ -2617,6 +2682,7 @@ function setTheme(theme) {
   document.getElementById('themeMenu').classList.remove('show');
   _FX.setTheme(theme);
   _CURSOR.setTheme(theme);
+  if (theme === 'cyberpunk') initCyberpunkSkyline();
 }
 function toggleThemeMenu() { document.getElementById('themeMenu').classList.toggle('show'); }
 
@@ -2785,6 +2851,116 @@ function resetLayout() {
     btn.textContent = '⚙ Layout';
   }
 }
+
+// ── CYBERPUNK BG ──
+var cpRainDensity = localStorage.getItem('cp_rain_density') || 'sparse';
+
+function toggleCpRain() {
+  cpRainDensity = (cpRainDensity === 'sparse') ? 'dense' : 'sparse';
+  localStorage.setItem('cp_rain_density', cpRainDensity);
+  var btn = document.getElementById('cpRainBtn');
+  btn.textContent = (cpRainDensity === 'dense') ? '🌧 Dense' : '🌧 Sparse';
+  btn.classList.toggle('dense', cpRainDensity === 'dense');
+}
+
+function initCyberpunkSkyline() {
+  var container = document.getElementById('cp-skyline');
+  if (!container) return;
+  var VW = window.innerWidth;
+  var VH = 200;
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', '100%'); svg.setAttribute('height', VH);
+  svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
+  svg.setAttribute('preserveAspectRatio', 'xMidYMax slice');
+
+  var defs = document.createElementNS(ns, 'defs');
+  // Glow filter
+  var flt = document.createElementNS(ns, 'filter');
+  flt.setAttribute('id', 'cpGlow'); flt.setAttribute('x','-30%'); flt.setAttribute('y','-30%'); flt.setAttribute('width','160%'); flt.setAttribute('height','160%');
+  var fb = document.createElementNS(ns, 'feGaussianBlur'); fb.setAttribute('stdDeviation','2'); fb.setAttribute('result','blur');
+  var fm = document.createElementNS(ns, 'feMerge');
+  var fn1 = document.createElementNS(ns,'feMergeNode'); fn1.setAttribute('in','blur');
+  var fn2 = document.createElementNS(ns,'feMergeNode'); fn2.setAttribute('in','SourceGraphic');
+  fm.appendChild(fn1); fm.appendChild(fn2); flt.appendChild(fb); flt.appendChild(fm); defs.appendChild(flt);
+  // Bottom fade overlay gradient
+  var og = document.createElementNS(ns, 'linearGradient');
+  og.setAttribute('id','cpFade'); og.setAttribute('x1','0'); og.setAttribute('y1','0'); og.setAttribute('x2','0'); og.setAttribute('y2','1');
+  var os1 = document.createElementNS(ns,'stop'); os1.setAttribute('offset','0%'); os1.setAttribute('stop-color','#0d0d0d'); os1.setAttribute('stop-opacity','0');
+  var os2 = document.createElementNS(ns,'stop'); os2.setAttribute('offset','100%'); os2.setAttribute('stop-color','#0d0d0d'); os2.setAttribute('stop-opacity','1');
+  og.appendChild(os1); og.appendChild(os2); defs.appendChild(og);
+  svg.appendChild(defs);
+
+  var bldColors = ['#0a0a0a','#0d0d0d','#111111','#0f0f0f'];
+  var accentCols = ['#ffe600','#ff0055','#00f0ff'];
+  var x = 0;
+  // Seed buildings
+  while (x < VW + 60) {
+    var bw = 28 + Math.floor(Math.random()*65);
+    var bh = 35 + Math.floor(Math.random()*140);
+    var by = VH - bh;
+    var bcol = bldColors[Math.floor(Math.random()*bldColors.length)];
+    var ac = accentCols[Math.floor(Math.random()*accentCols.length)];
+    // Building rect
+    var r = document.createElementNS(ns,'rect');
+    r.setAttribute('x',x); r.setAttribute('y',by); r.setAttribute('width',bw); r.setAttribute('height',bh);
+    r.setAttribute('fill',bcol); r.setAttribute('stroke',ac); r.setAttribute('stroke-width','0.4'); r.setAttribute('stroke-opacity','0.25');
+    svg.appendChild(r);
+    // Windows
+    var wrows = Math.floor(bh/14), wcols = Math.floor(bw/11);
+    for (var wr=0;wr<wrows;wr++) {
+      for (var wc=0;wc<wcols;wc++) {
+        if (Math.random()>0.5) {
+          var wx=x+4+wc*11, wy=by+5+wr*14;
+          var wclr = Math.random()>0.65 ? '#ffe600' : (Math.random()>0.5 ? '#00f0ff' : 'rgba(255,255,200,0.7)');
+          var win=document.createElementNS(ns,'rect');
+          win.setAttribute('x',wx); win.setAttribute('y',wy); win.setAttribute('width',3+Math.random()*2); win.setAttribute('height',4+Math.random()*2);
+          win.setAttribute('fill',wclr); win.setAttribute('opacity',0.35+Math.random()*0.5);
+          svg.appendChild(win);
+        }
+      }
+    }
+    // Antenna on tall buildings
+    if (bh>90 && Math.random()>0.45) {
+      var ax=x+bw/2, atop=by-15-Math.random()*25;
+      var ant=document.createElementNS(ns,'line');
+      ant.setAttribute('x1',ax); ant.setAttribute('y1',by); ant.setAttribute('x2',ax); ant.setAttribute('y2',atop);
+      ant.setAttribute('stroke','#ff0055'); ant.setAttribute('stroke-width','1'); ant.setAttribute('stroke-opacity','0.6');
+      svg.appendChild(ant);
+      var dot=document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',ax); dot.setAttribute('cy',atop); dot.setAttribute('r','2'); dot.setAttribute('fill','#ff0055'); dot.setAttribute('opacity','0.85');
+      dot.setAttribute('filter','url(#cpGlow)');
+      svg.appendChild(dot);
+    }
+    // Neon sign stripe on some buildings
+    if (Math.random()>0.7 && bw>38) {
+      var sc=accentCols[Math.floor(Math.random()*accentCols.length)];
+      var sg=document.createElementNS(ns,'rect');
+      sg.setAttribute('x',x+4); sg.setAttribute('y',by+Math.floor(Math.random()*Math.max(10,bh*0.25)));
+      sg.setAttribute('width',bw-8); sg.setAttribute('height',2);
+      sg.setAttribute('fill',sc); sg.setAttribute('opacity','0.65'); sg.setAttribute('filter','url(#cpGlow)');
+      svg.appendChild(sg);
+    }
+    x += bw + 1 + Math.floor(Math.random()*4);
+  }
+  // Fade overlay at bottom
+  var ov=document.createElementNS(ns,'rect');
+  ov.setAttribute('x','0'); ov.setAttribute('y',VH*0.55); ov.setAttribute('width',VW); ov.setAttribute('height',VH*0.45);
+  ov.setAttribute('fill','url(#cpFade)');
+  svg.appendChild(ov);
+
+  container.innerHTML = '';
+  container.appendChild(svg);
+}
+
+// Init rain button state on load
+(function() {
+  var btn = document.getElementById('cpRainBtn');
+  if (btn) {
+    btn.textContent = (cpRainDensity === 'dense') ? '🌧 Dense' : '🌧 Sparse';
+    btn.classList.toggle('dense', cpRainDensity === 'dense');
+  }
+})();
 
 applyLayout();
 
