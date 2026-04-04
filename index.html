@@ -1031,7 +1031,7 @@ var _FX = (function() {
 function dbSave(key) {
   if (!_sb) return;
   var val = localStorage.getItem(key);
-  _sb.from('yang_data').upsert({ key: key, value: { v: val }, updated_at: new Date().toISOString() }).catch(function() {});
+  _sb.from('yang_data').upsert({ key: key, value: { v: val }, updated_at: new Date().toISOString() }).then(function() {}).catch(function() {});
 }
 
 // ── CLOCK + WORLD CLOCKS ──
