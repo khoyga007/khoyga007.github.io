@@ -759,21 +759,57 @@ var _FX = (function() {
     var d = Math.max(dt, 0.016);
     switch (themeFx) {
       case 'streaks':
-        // Horizontal neon streaks + occasional vertical flash
-        if (tp.length < 45 && Math.random() < 0.4) {
-          var colors = ['#ff2d78','#00f0ff','#a855f7','#ff6b35'];
+        // Circuit traces: generate paths with 90° turns
+        if (tp.length < 30 && Math.random() < 0.06) {
+          var colors = ['#00f0ff','#ff2d78','#a855f7','#39ff14'];
           var c = colors[Math.floor(Math.random()*colors.length)];
-          var vert = Math.random() < 0.15;
-          tp.push({ x: vert ? Math.random()*W : -50, y: vert ? -50 : Math.random()*H,
-            vx: vert ? 0 : 400+Math.random()*800, vy: vert ? 500+Math.random()*600 : (Math.random()-0.5)*30,
-            len: 80+Math.random()*300, w: 1+Math.random()*2.5, life: 1, decay: 0.015*d*60,
-            color: c, type: 'streak' });
+          // Build a path of segments (horizontal/vertical with right-angle turns)
+          var sx = Math.random() < 0.5 ? -20 : W + 20;
+          var sy = Math.random() * H;
+          var segs = []; var px = sx, py = sy;
+          var horiz = Math.abs(sx) < 10 || sx > W; // start direction
+          var segCount = 3 + Math.floor(Math.random() * 5);
+          for (var si = 0; si < segCount; si++) {
+            var segLen = 60 + Math.random() * 200;
+            var nx, ny;
+            if (horiz) { nx = px + (sx < W/2 ? segLen : -segLen); ny = py; }
+            else { nx = px; ny = py + (Math.random() < 0.5 ? segLen : -segLen); }
+            segs.push({ x1: px, y1: py, x2: nx, y2: ny });
+            px = nx; py = ny; horiz = !horiz;
+          }
+          tp.push({ segs: segs, life: 1, decay: 0.003 * d * 60, color: c,
+            progress: 0, speed: 0.4 + Math.random() * 0.6, type: 'circuit',
+            vx: 0, vy: 0, x: sx, y: sy });
         }
-        // Floating hex particles
-        if (tp.length < 65 && Math.random() < 0.15) {
-          tp.push({ x: Math.random()*W, y: Math.random()*H, vx: (Math.random()-0.5)*20, vy: -(5+Math.random()*15),
-            r: 6+Math.random()*14, life: 1, decay: 0.004*d*60, rot: Math.random()*Math.PI*2, rotV: (Math.random()-0.5)*0.8,
-            color: Math.random()>0.5?'#ff2d78':'#00f0ff', type: 'hex' });
+        // Circuit nodes: glowing dots at grid intersections
+        if (tp.length < 50 && Math.random() < 0.04) {
+          var gridX = Math.floor(Math.random() * (W/80)) * 80 + 40;
+          var gridY = Math.floor(Math.random() * (H/80)) * 80 + 40;
+          tp.push({ x: gridX, y: gridY, vx: 0, vy: 0, r: 2 + Math.random() * 3,
+            life: 1, decay: 0.004 * d * 60, pulse: Math.random() * Math.PI * 2,
+            color: Math.random() > 0.5 ? '#00f0ff' : '#ff2d78', type: 'circuitnode' });
+        }
+        // Data pulses: fast-moving bright dots
+        if (tp.length < 55 && Math.random() < 0.15) {
+          var horiz = Math.random() < 0.6;
+          var c = Math.random() > 0.6 ? '#39ff14' : (Math.random() > 0.5 ? '#00f0ff' : '#ff2d78');
+          if (horiz) {
+            tp.push({ x: -10, y: Math.floor(Math.random()*(H/80))*80+40,
+              vx: 300+Math.random()*500, vy: 0, r: 2, life: 1, decay: 0.018*d*60,
+              color: c, type: 'datapulse' });
+          } else {
+            tp.push({ x: Math.floor(Math.random()*(W/80))*80+40, y: -10,
+              vx: 0, vy: 300+Math.random()*500, r: 2, life: 1, decay: 0.018*d*60,
+              color: c, type: 'datapulse' });
+          }
+        }
+        // Subtle grid lines (static, long-lived)
+        if (tp.length < 60 && Math.random() < 0.01) {
+          var horiz = Math.random() < 0.5;
+          var pos = Math.floor(Math.random() * (horiz ? H/80 : W/80)) * 80 + 40;
+          tp.push({ x: horiz ? 0 : pos, y: horiz ? pos : 0,
+            vx: 0, vy: 0, len: horiz ? W : H, life: 1, decay: 0.0008*d*60,
+            horiz: horiz, type: 'gridline' });
         }
         break;
       case 'orbs':
@@ -1039,29 +1075,95 @@ var _FX = (function() {
       var p = tp[i], a = Math.max(0, p.life);
       cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over';
       switch (p.type) {
-        case 'streak': {
-          var dx = p.vx !== 0 ? -1 : 0, dy = p.vy !== 0 ? -1 : 0;
-          var ex = p.x + dx * p.len, ey = p.y + dy * p.len;
-          var gr = cx.createLinearGradient(p.x, p.y, ex, ey);
-          gr.addColorStop(0, p.color); gr.addColorStop(1, 'transparent');
-          // Core
+        case 'circuit': {
+          if (!p.segs) break;
+          var totalLen = 0;
+          p.segs.forEach(function(s) { totalLen += Math.abs(s.x2-s.x1) + Math.abs(s.y2-s.y1); });
+          p.progress = Math.min(p.progress + p.speed * dt, 1);
+          var drawLen = totalLen * p.progress;
+          var drawn = 0;
           cx.globalCompositeOperation = 'lighter';
-          cx.globalAlpha = a * 0.9; cx.strokeStyle = gr; cx.lineWidth = p.w;
-          cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(ex, ey); cx.stroke();
-          // Glow
-          cx.globalAlpha = a * 0.3; cx.lineWidth = p.w * 4;
-          cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(ex, ey); cx.stroke();
-          // Head dot
-          glow(p.x, p.y, 6+p.w*2, p.color, a*0.7);
+          // Dim base trace
+          cx.globalAlpha = a * 0.12; cx.strokeStyle = p.color; cx.lineWidth = 1;
+          cx.beginPath();
+          p.segs.forEach(function(s) { cx.moveTo(s.x1, s.y1); cx.lineTo(s.x2, s.y2); });
+          cx.stroke();
+          // Bright animated trace
+          cx.globalAlpha = a * 0.7; cx.lineWidth = 1.5;
+          cx.beginPath();
+          var headX = p.segs[0].x1, headY = p.segs[0].y1;
+          for (var si = 0; si < p.segs.length && drawn < drawLen; si++) {
+            var s = p.segs[si];
+            var segLen = Math.abs(s.x2-s.x1) + Math.abs(s.y2-s.y1);
+            var remain = drawLen - drawn;
+            if (remain >= segLen) {
+              cx.moveTo(s.x1, s.y1); cx.lineTo(s.x2, s.y2);
+              headX = s.x2; headY = s.y2;
+              drawn += segLen;
+            } else {
+              var t = remain / segLen;
+              var ex = s.x1 + (s.x2-s.x1)*t, ey = s.y1 + (s.y2-s.y1)*t;
+              cx.moveTo(s.x1, s.y1); cx.lineTo(ex, ey);
+              headX = ex; headY = ey;
+              drawn = drawLen;
+            }
+          }
+          cx.stroke();
+          // Glow trace
+          cx.globalAlpha = a * 0.2; cx.lineWidth = 5;
+          cx.stroke();
+          // Head glow
+          glow(headX, headY, 12, p.color, a * 0.8);
+          // Corner nodes
+          cx.globalAlpha = a * 0.6;
+          p.segs.forEach(function(s, idx) {
+            if (idx > 0 && drawn > 0) {
+              cx.fillStyle = p.color;
+              cx.beginPath(); cx.arc(s.x1, s.y1, 2.5, 0, Math.PI*2); cx.fill();
+            }
+          });
           cx.globalCompositeOperation = 'source-over';
         } break;
-        case 'hex': {
-          cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot);
-          cx.globalAlpha = a * 0.25; cx.strokeStyle = p.color; cx.lineWidth = 1;
+        case 'circuitnode': {
+          var pulse = (Math.sin(p.pulse) + 1) / 2;
+          cx.globalCompositeOperation = 'lighter';
+          // Core dot
+          cx.globalAlpha = a * 0.7; cx.fillStyle = p.color;
+          cx.beginPath(); cx.arc(p.x, p.y, p.r * (0.8 + pulse * 0.4), 0, Math.PI*2); cx.fill();
+          // Ring
+          cx.globalAlpha = a * 0.3; cx.strokeStyle = p.color; cx.lineWidth = 0.8;
+          cx.beginPath(); cx.arc(p.x, p.y, p.r * 3 + pulse * 4, 0, Math.PI*2); cx.stroke();
+          // Glow
+          glow(p.x, p.y, p.r * 5 + pulse * 6, p.color, a * 0.2 * (0.5 + pulse * 0.5));
+          // Small cross
+          cx.globalAlpha = a * 0.15; cx.lineWidth = 0.5;
+          var cr = p.r * 4;
+          cx.beginPath(); cx.moveTo(p.x - cr, p.y); cx.lineTo(p.x + cr, p.y); cx.stroke();
+          cx.beginPath(); cx.moveTo(p.x, p.y - cr); cx.lineTo(p.x, p.y + cr); cx.stroke();
+          cx.globalCompositeOperation = 'source-over';
+        } break;
+        case 'datapulse': {
+          cx.globalCompositeOperation = 'lighter';
+          // Bright core
+          cx.globalAlpha = a * 0.95; cx.fillStyle = p.color;
+          cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI*2); cx.fill();
+          // Glow
+          glow(p.x, p.y, 15, p.color, a * 0.6);
+          // Trail
+          var tx = p.vx !== 0 ? -Math.sign(p.vx) * 30 : 0;
+          var ty = p.vy !== 0 ? -Math.sign(p.vy) * 30 : 0;
+          var tg = cx.createLinearGradient(p.x, p.y, p.x + tx, p.y + ty);
+          tg.addColorStop(0, p.color); tg.addColorStop(1, 'transparent');
+          cx.globalAlpha = a * 0.5; cx.strokeStyle = tg; cx.lineWidth = 2;
+          cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x + tx, p.y + ty); cx.stroke();
+          cx.globalCompositeOperation = 'source-over';
+        } break;
+        case 'gridline': {
+          cx.globalAlpha = a * 0.04; cx.strokeStyle = '#00f0ff'; cx.lineWidth = 0.5;
           cx.beginPath();
-          for (var h=0;h<6;h++) { var ha=h*Math.PI/3; h===0?cx.moveTo(Math.cos(ha)*p.r,Math.sin(ha)*p.r):cx.lineTo(Math.cos(ha)*p.r,Math.sin(ha)*p.r); }
-          cx.closePath(); cx.stroke();
-          cx.restore();
+          if (p.horiz) { cx.moveTo(0, p.y); cx.lineTo(W, p.y); }
+          else { cx.moveTo(p.x, 0); cx.lineTo(p.x, H); }
+          cx.stroke();
         } break;
         case 'orb': {
           var pulse = (Math.sin(p.pulse)+1)/2;
