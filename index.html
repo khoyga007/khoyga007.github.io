@@ -161,6 +161,17 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
 .fx-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); color: var(--cyan); border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; margin-top: 2px; }
 .fx-toggle-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
 .fx-toggle-btn.off { color: var(--text-dim); border-color: rgba(255,255,255,0.12); }
+.ctrl-switcher { position: relative; }
+.ctrl-btn { background: rgba(255,255,255,0.06); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); color: var(--cyan); border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+.ctrl-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.ctrl-btn.active { border-color: var(--magenta); color: var(--magenta); }
+.ctrl-menu { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: var(--widget-bg); border: 1px solid color-mix(in srgb, var(--cyan) 25%, transparent); border-radius: 8px; min-width: 132px; padding: 6px; z-index: 200; flex-direction: column; gap: 3px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.ctrl-menu.show { display: flex; }
+.ctrl-menu .fx-toggle-btn,
+.ctrl-menu .layout-btn,
+.ctrl-menu .layout-reset-btn,
+.ctrl-menu .cp-rain-btn { width: 100%; margin-top: 0; text-align: left; justify-content: flex-start; }
+[data-theme="cyberpunk"] .ctrl-menu .cp-rain-btn { display: flex; }
 .theme-switcher { position: relative; margin-top: 2px; }
 .theme-btn { background: rgba(255,255,255,0.06); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); color: var(--cyan); border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
 .theme-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
@@ -515,10 +526,15 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
         <div class="world-clock-item"><span class="wc-label">🗽 New York</span><span class="wc-time" id="wc-newyork">--:--</span></div>
         <div class="world-clock-item"><span class="wc-label">🏙️ London</span><span class="wc-time" id="wc-london">--:--</span></div>
       </div>
-      <button class="fx-toggle-btn" id="fxToggleBtn" onclick="toggleFX()" title="Bật/tắt hiệu ứng">✨ FX</button>
-      <button class="layout-btn" id="layoutBtn" onclick="toggleLayoutMode()" title="Tùy chỉnh layout">⚙ Layout</button>
-      <button class="layout-reset-btn" id="layoutResetBtn" onclick="resetLayout()" title="Về mặc định">↺ Reset</button>
-      <button class="cp-rain-btn" id="cpRainBtn" onclick="toggleCpRain()" title="Mật độ mưa neon">🌧 Sparse</button>
+      <div class="ctrl-switcher">
+        <button class="ctrl-btn" id="ctrlBtn" onclick="toggleCtrlMenu()" title="Controls">⚙ Controls</button>
+        <div class="ctrl-menu" id="ctrlMenu">
+          <button class="fx-toggle-btn" id="fxToggleBtn" onclick="toggleFX()">✨ FX</button>
+          <button class="layout-btn" id="layoutBtn" onclick="toggleLayoutMode()">⚙ Layout</button>
+          <button class="layout-reset-btn" id="layoutResetBtn" onclick="resetLayout()">↺ Reset</button>
+          <button class="cp-rain-btn" id="cpRainBtn" onclick="toggleCpRain()">🌧 Sparse</button>
+        </div>
+      </div>
       <div class="theme-switcher">
         <button class="theme-btn" onclick="toggleThemeMenu()">&#127912; Theme</button>
         <div class="theme-menu" id="themeMenu">
@@ -2698,8 +2714,12 @@ function toggleFX() {
     _FX.disable();
   }
 }
+function toggleCtrlMenu() {
+  document.getElementById('ctrlMenu').classList.toggle('show');
+}
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.theme-switcher')) document.getElementById('themeMenu').classList.remove('show');
+  if (!e.target.closest('.ctrl-switcher')) document.getElementById('ctrlMenu').classList.remove('show');
 });
 setTheme(localStorage.getItem('yang_theme') || 'neon-dark');
 
