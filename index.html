@@ -460,7 +460,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
 #cp-skyline {
   display: none;
   position: fixed; bottom: 0; left: 0; width: 100%;
-  pointer-events: none; z-index: 9993;
+  pointer-events: none; z-index: 0;
 }
 [data-theme="cyberpunk"] #cp-scanline,
 [data-theme="cyberpunk"] #cp-vignette,
@@ -2867,7 +2867,7 @@ function initCyberpunkSkyline() {
   var container = document.getElementById('cp-skyline');
   if (!container) return;
   var VW = window.innerWidth;
-  var VH = 200;
+  var VH = 130;
   var ns = 'http://www.w3.org/2000/svg';
   var svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('width', '100%'); svg.setAttribute('height', VH);
