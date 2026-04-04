@@ -158,6 +158,9 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
 .world-clock-item .wc-label { font-size: 9px; opacity: 0.7; display: block; }
 .world-clock-item .wc-time { font-family: var(--font-heading); font-size: 11px; color: var(--cyan); }
 
+.fx-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); color: var(--cyan); border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; margin-top: 2px; }
+.fx-toggle-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.fx-toggle-btn.off { color: var(--text-dim); border-color: rgba(255,255,255,0.12); }
 .theme-switcher { position: relative; margin-top: 2px; }
 .theme-btn { background: rgba(255,255,255,0.06); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); color: var(--cyan); border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
 .theme-btn:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
@@ -456,6 +459,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
         <div class="world-clock-item"><span class="wc-label">🗽 New York</span><span class="wc-time" id="wc-newyork">--:--</span></div>
         <div class="world-clock-item"><span class="wc-label">🏙️ London</span><span class="wc-time" id="wc-london">--:--</span></div>
       </div>
+      <button class="fx-toggle-btn" id="fxToggleBtn" onclick="toggleFX()" title="Bật/tắt hiệu ứng">✨ FX</button>
       <div class="theme-switcher">
         <button class="theme-btn" onclick="toggleThemeMenu()">&#127912; Theme</button>
         <div class="theme-menu" id="themeMenu">
@@ -708,6 +712,7 @@ var _sb = (function() {
 })();
 
 // ── FX SYSTEM ──
+var _fxEnabled = true;
 var _FX = (function() {
   var cv, cx, W, H, raf, last = 0, dt = 0;
   var tp = [], ap = [];   // theme particles, ambient particles
@@ -1024,8 +1029,9 @@ var _FX = (function() {
   init();
 
   return {
-    setTheme: function(t) { themeFx = THEME_MAP[t] || null; tp = []; },
-    setAmbient: function(a) { ambFx = a ? (AMBIENT_MAP[a] || null) : null; ap = []; }
+    setTheme: function(t) { if (!_fxEnabled) return; themeFx = THEME_MAP[t] || null; tp = []; },
+    setAmbient: function(a) { if (!_fxEnabled) return; ambFx = a ? (AMBIENT_MAP[a] || null) : null; ap = []; },
+    disable: function() { themeFx = null; ambFx = null; tp = []; ap = []; cx.clearRect(0, 0, W, H); }
   };
 })();
 
@@ -1860,6 +1866,19 @@ function setTheme(theme) {
   _FX.setTheme(theme);
 }
 function toggleThemeMenu() { document.getElementById('themeMenu').classList.toggle('show'); }
+
+function toggleFX() {
+  _fxEnabled = !_fxEnabled;
+  var btn = document.getElementById('fxToggleBtn');
+  if (_fxEnabled) {
+    btn.textContent = '✨ FX'; btn.classList.remove('off');
+    _FX.setTheme(document.documentElement.getAttribute('data-theme'));
+    if (typeof ambActive !== 'undefined' && ambActive) _FX.setAmbient(ambActive);
+  } else {
+    btn.textContent = '✨ FX off'; btn.classList.add('off');
+    _FX.disable();
+  }
+}
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.theme-switcher')) document.getElementById('themeMenu').classList.remove('show');
 });
