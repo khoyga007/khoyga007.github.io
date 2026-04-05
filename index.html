@@ -9,6 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+@font-face {
+  font-family: 'DSEG7';
+  src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/webfonts/DSEG7Classic-Regular.woff2') format('woff2');
+  font-display: swap;
+}
 :root, [data-theme="neon-dark"] {
   --bg: #070714; --bg2: #0d0d1f; --card: rgba(13,13,35,0.85);
   --border: #00f0ff; --cyan: #00f0ff; --magenta: #ff00de;
@@ -89,6 +94,50 @@
     radial-gradient(ellipse at 85% 50%, rgba(255,0,85,0.06) 0%, transparent 50%);
   --font-heading: 'Orbitron', monospace; --font-body: 'Rajdhani', sans-serif;
 }
+/* ── Cyberpunk: LED 7-segment clock ── */
+[data-theme="cyberpunk"] .clock {
+  font-family: 'DSEG7', monospace;
+  font-size: 1.9rem;
+  color: #00ffcc;
+  text-shadow: 0 0 6px #00ffcc, 0 0 18px #00ffcc99, 0 0 35px #00ffcc44;
+  background: #020d09;
+  border: 1px solid #00ffcc28;
+  border-radius: 3px;
+  padding: 5px 14px;
+  letter-spacing: 3px;
+  position: relative;
+  animation: cp-led-flicker 9s ease-in-out infinite;
+}
+[data-theme="cyberpunk"] .clock::before {
+  content: '88:88:88';
+  font-family: 'DSEG7', monospace;
+  font-size: 1.9rem;
+  letter-spacing: 3px;
+  color: #00ffcc;
+  opacity: 0.07;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+[data-theme="cyberpunk"] .world-clock-item {
+  background: #020d09;
+  border-color: #ffe60022;
+}
+[data-theme="cyberpunk"] .world-clock-item .wc-time {
+  font-family: 'DSEG7', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #ffe600;
+  text-shadow: 0 0 5px #ffe60099;
+}
+@keyframes cp-led-flicker {
+  0%,93%,100% { opacity: 1; }
+  94% { opacity: 0.82; }
+  95% { opacity: 1; }
+  97% { opacity: 0.88; }
+}
 [data-theme="aesthetic"] {
   --bg: #1a0533; --bg2: #2d1050; --card: rgba(45,16,80,0.85);
   --border: #ff71ce; --cyan: #ff71ce; --magenta: #b967ff;
@@ -151,6 +200,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
 .search-history-clear:hover { color: var(--magenta); }
 
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.header-btns { display: flex; flex-direction: row; gap: 6px; align-items: flex-start; margin-top: 2px; }
 .clock { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--green); text-shadow: var(--glow-green); letter-spacing: 2px; animation: pulse-glow 3s ease-in-out infinite; }
 .date-display { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
 .world-clocks { display: flex; gap: 10px; margin-top: 2px; }
@@ -468,14 +518,22 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
   pointer-events: none; z-index: 9994;
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
 }
-#cp-skyline {
+#cp-skyline { display: none; }
+#cp-video-wrap {
   display: none;
   position: fixed; bottom: 0; left: 0; width: 100%;
-  pointer-events: none; z-index: 0;
+  height: 380px; pointer-events: none; z-index: 0; overflow: hidden;
+}
+#cp-video-wrap video {
+  width: 100%; height: 100%; object-fit: cover; object-position: center bottom;
+}
+#cp-video-wrap::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, #0d0d0d 0%, transparent 60%);
 }
 [data-theme="cyberpunk"] #cp-scanline,
-[data-theme="cyberpunk"] #cp-vignette,
-[data-theme="cyberpunk"] #cp-skyline { display: block; }
+[data-theme="cyberpunk"] #cp-vignette { display: block; }
+[data-theme="cyberpunk"] #cp-video-wrap { display: block; }
 .cp-rain-btn {
   display: none;
   background: transparent; border: 1px solid rgba(255,230,0,0.3);
@@ -496,7 +554,11 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
   <canvas id="cursor-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10000;"></canvas>
   <div id="cp-scanline"></div>
   <div id="cp-vignette"></div>
-  <div id="cp-skyline"></div>
+  <div id="cp-video-wrap">
+    <video autoplay loop muted playsinline>
+      <source src="assets/cp-city.webm" type="video/webm">
+    </video>
+  </div>
 
   <!-- HEADER -->
   <header class="header">
@@ -526,6 +588,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
         <div class="world-clock-item"><span class="wc-label">🗽 New York</span><span class="wc-time" id="wc-newyork">--:--</span></div>
         <div class="world-clock-item"><span class="wc-label">🏙️ London</span><span class="wc-time" id="wc-london">--:--</span></div>
       </div>
+      <div class="header-btns">
       <div class="ctrl-switcher">
         <button class="ctrl-btn" id="ctrlBtn" onclick="toggleCtrlMenu()" title="Controls">⚙ Controls</button>
         <div class="ctrl-menu" id="ctrlMenu">
@@ -538,6 +601,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
       <div class="theme-switcher">
         <button class="theme-btn" onclick="toggleThemeMenu()">&#127912; Theme</button>
         <div class="theme-menu" id="themeMenu">
+
           <button class="theme-option active" data-theme="neon-dark" onclick="setTheme('neon-dark')"><span class="theme-dot" style="background:linear-gradient(135deg,#070714,#00f0ff)"></span> Neon Dark</button>
           <button class="theme-option" data-theme="vintage" onclick="setTheme('vintage')"><span class="theme-dot" style="background:linear-gradient(135deg,#2b1d0e,#c9a96e)"></span> Vintage</button>
           <button class="theme-option" data-theme="classic" onclick="setTheme('classic')"><span class="theme-dot" style="background:linear-gradient(135deg,#f5f0e8,#3a6ea5)"></span> Classic</button>
@@ -550,6 +614,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
           <button class="theme-option" data-theme="popcomic" onclick="setTheme('popcomic')"><span class="theme-dot" style="background:linear-gradient(135deg,#fff9c4,#b71c1c)"></span> Pop Comic</button>
         </div>
       </div>
+      </div> <!-- end .header-btns -->
     </div>
   </header>
 
@@ -2884,90 +2949,214 @@ function toggleCpRain() {
 }
 
 function initCyberpunkSkyline() {
+  // ✍ Written by Claire
   var container = document.getElementById('cp-skyline');
   if (!container) return;
   var VW = window.innerWidth;
-  var VH = 130;
+  var VH = 320;
+  var GY = 210; // ground/water split
   var ns = 'http://www.w3.org/2000/svg';
   var svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('width', '100%'); svg.setAttribute('height', VH);
   svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
   svg.setAttribute('preserveAspectRatio', 'xMidYMax slice');
 
+  /* helpers */
+  function el(tag, attrs) {
+    var e = document.createElementNS(ns, tag);
+    Object.keys(attrs).forEach(function(k){ e.setAttribute(k, attrs[k]); });
+    return e;
+  }
+  function linGrad(id, stops) {
+    var g = el('linearGradient',{id:id,x1:'0',y1:'0',x2:'0',y2:'1'});
+    stops.forEach(function(s){
+      var st = el('stop',{offset:s[0],'stop-color':s[1]});
+      if(s[2]!=null) st.setAttribute('stop-opacity',s[2]);
+      g.appendChild(st);
+    });
+    return g;
+  }
+  function glow(id, dev) {
+    var f = el('filter',{id:id,x:'-60%',y:'-60%',width:'220%',height:'220%'});
+    var b = el('feGaussianBlur',{stdDeviation:dev||'3',result:'blur'});
+    var m = document.createElementNS(ns,'feMerge');
+    m.appendChild(el('feMergeNode',{in:'blur'})); m.appendChild(el('feMergeNode',{in:'SourceGraphic'}));
+    f.appendChild(b); f.appendChild(m); return f;
+  }
+
+  /* radial gradient helper */
+  function radGrad(id, cx,cy,r, stops) {
+    var g = document.createElementNS(ns,'radialGradient');
+    g.setAttribute('id',id); g.setAttribute('cx',cx); g.setAttribute('cy',cy); g.setAttribute('r',r);
+    g.setAttribute('gradientUnits','userSpaceOnUse');
+    stops.forEach(function(s){
+      var st=el('stop',{offset:s[0],'stop-color':s[1]});
+      if(s[2]!=null) st.setAttribute('stop-opacity',s[2]);
+      g.appendChild(st);
+    }); return g;
+  }
+
+  /* defs */
   var defs = document.createElementNS(ns, 'defs');
-  // Glow filter
-  var flt = document.createElementNS(ns, 'filter');
-  flt.setAttribute('id', 'cpGlow'); flt.setAttribute('x','-30%'); flt.setAttribute('y','-30%'); flt.setAttribute('width','160%'); flt.setAttribute('height','160%');
-  var fb = document.createElementNS(ns, 'feGaussianBlur'); fb.setAttribute('stdDeviation','2'); fb.setAttribute('result','blur');
-  var fm = document.createElementNS(ns, 'feMerge');
-  var fn1 = document.createElementNS(ns,'feMergeNode'); fn1.setAttribute('in','blur');
-  var fn2 = document.createElementNS(ns,'feMergeNode'); fn2.setAttribute('in','SourceGraphic');
-  fm.appendChild(fn1); fm.appendChild(fn2); flt.appendChild(fb); flt.appendChild(fm); defs.appendChild(flt);
-  // Bottom fade overlay gradient
-  var og = document.createElementNS(ns, 'linearGradient');
-  og.setAttribute('id','cpFade'); og.setAttribute('x1','0'); og.setAttribute('y1','0'); og.setAttribute('x2','0'); og.setAttribute('y2','1');
-  var os1 = document.createElementNS(ns,'stop'); os1.setAttribute('offset','0%'); os1.setAttribute('stop-color','#0d0d0d'); os1.setAttribute('stop-opacity','0');
-  var os2 = document.createElementNS(ns,'stop'); os2.setAttribute('offset','100%'); os2.setAttribute('stop-color','#0d0d0d'); os2.setAttribute('stop-opacity','1');
-  og.appendChild(os1); og.appendChild(os2); defs.appendChild(og);
+  defs.appendChild(linGrad('cpSkyG', [['0%','#060606'],['60%','#0b0b0b'],['100%','#101010']]));
+  defs.appendChild(linGrad('cpWaterG',[['0%','#0f0f0f',0.9],['100%','#060606',1]]));
+  defs.appendChild(linGrad('cpCyanG', [['0%','#00ffcc'],['60%','#00aa88'],['100%','#004433']]));
+  defs.appendChild(linGrad('cpPurpG', [['0%','#ffe600'],['60%','#997700'],['100%','#221800']]));
+  defs.appendChild(linGrad('cpMagG',  [['0%','#ff0055'],['100%','#330011']]));
+  defs.appendChild(linGrad('cpWFade', [['0%','#060606',0],['65%','#060606',0.65],['100%','#060606',1]]));
+  /* building tint gradients (objectBoundingBox) */
+  defs.appendChild(linGrad('cpBN', [['0%','#1c1c1c'],['100%','#090909']]));          /* neutral */
+  defs.appendChild(linGrad('cpBY', [['0%','#1c1900'],['50%','#111000'],['100%','#070700']])); /* yellow tint */
+  defs.appendChild(linGrad('cpBC', [['0%','#001c18'],['50%','#000f0d'],['100%','#000707']])); /* cyan tint */
+  defs.appendChild(linGrad('cpBR', [['0%','#1c0007'],['50%','#0f0004'],['100%','#070002']])); /* red tint */
+  /* horizon glow radial (placed after VW is known – defined here with dummy, overridden below) */
+  defs.appendChild(glow('cpGlw','3'));
+  defs.appendChild(glow('cpGlwSoft','8'));
+  defs.appendChild(glow('cpMoonGlw','12'));
   svg.appendChild(defs);
 
-  var bldColors = ['#0a0a0a','#0d0d0d','#111111','#0f0f0f'];
-  var accentCols = ['#ffe600','#ff0055','#00f0ff'];
-  var x = 0;
-  // Seed buildings
-  while (x < VW + 60) {
-    var bw = 28 + Math.floor(Math.random()*65);
-    var bh = 35 + Math.floor(Math.random()*140);
-    var by = VH - bh;
-    var bcol = bldColors[Math.floor(Math.random()*bldColors.length)];
-    var ac = accentCols[Math.floor(Math.random()*accentCols.length)];
-    // Building rect
-    var r = document.createElementNS(ns,'rect');
-    r.setAttribute('x',x); r.setAttribute('y',by); r.setAttribute('width',bw); r.setAttribute('height',bh);
-    r.setAttribute('fill',bcol); r.setAttribute('stroke',ac); r.setAttribute('stroke-width','0.4'); r.setAttribute('stroke-opacity','0.25');
-    svg.appendChild(r);
-    // Windows
-    var wrows = Math.floor(bh/14), wcols = Math.floor(bw/11);
-    for (var wr=0;wr<wrows;wr++) {
-      for (var wc=0;wc<wcols;wc++) {
-        if (Math.random()>0.5) {
-          var wx=x+4+wc*11, wy=by+5+wr*14;
-          var wclr = Math.random()>0.65 ? '#ffe600' : (Math.random()>0.5 ? '#00f0ff' : 'rgba(255,255,200,0.7)');
-          var win=document.createElementNS(ns,'rect');
-          win.setAttribute('x',wx); win.setAttribute('y',wy); win.setAttribute('width',3+Math.random()*2); win.setAttribute('height',4+Math.random()*2);
-          win.setAttribute('fill',wclr); win.setAttribute('opacity',0.35+Math.random()*0.5);
-          svg.appendChild(win);
-        }
+  /* sky */
+  svg.appendChild(el('rect',{x:0,y:0,width:VW,height:GY,fill:'url(#cpSkyG)'}));
+
+  /* horizon city glow – radial, centred low on horizon */
+  var hgCy = GY + 20;
+  var hgRx = VW * 0.65, hgRy = GY * 0.55;
+  var hgG = document.createElementNS(ns,'radialGradient');
+  hgG.setAttribute('id','cpHorizGlw'); hgG.setAttribute('cx', VW*0.5); hgG.setAttribute('cy', hgCy);
+  hgG.setAttribute('rx', hgRx); hgG.setAttribute('ry', hgRy);
+  hgG.setAttribute('gradientUnits','userSpaceOnUse');
+  [[0, '#ffe600', 0.13],[0.35, '#ff0055', 0.05],[1, '#060606', 0]].forEach(function(s){
+    var st=el('stop',{offset:s[0],'stop-color':s[1],'stop-opacity':s[2]}); hgG.appendChild(st);
+  });
+  defs.appendChild(hgG);
+  svg.appendChild(el('ellipse',{cx:VW*0.5,cy:hgCy,rx:hgRx,ry:hgRy,fill:'url(#cpHorizGlw)'}));
+
+  /* stars */
+  for(var i=0;i<110;i++){
+    var sr=Math.random()>.88?1.6:(Math.random()>.6?.9:.4);
+    svg.appendChild(el('circle',{cx:Math.random()*VW,cy:Math.random()*(GY*.88),r:sr,fill:'white',opacity:(0.15+Math.random()*.6).toFixed(2)}));
+  }
+
+  /* moon */
+  svg.appendChild(el('circle',{cx:VW*.87,cy:44,r:42,fill:'#ffe600',opacity:'.08'}));
+  svg.appendChild(el('circle',{cx:VW*.87,cy:44,r:22,fill:'#fffce0',filter:'url(#cpMoonGlw)'}));
+
+  /* layer 1 – far silhouettes with slight tint variation */
+  var bgTints=['#090909','#0b0905','#050909','#0a0808','#080a08'];
+  var bx=0;
+  while(bx<VW){
+    var bw2=32+Math.random()*78,bh2=22+Math.random()*90;
+    var bt=bgTints[Math.floor(Math.random()*bgTints.length)];
+    svg.appendChild(el('rect',{x:bx,y:GY-bh2,width:bw2,height:bh2,fill:bt,opacity:(0.7+Math.random()*.25).toFixed(2)}));
+    bx+=bw2+Math.random()*5;
+  }
+
+  /* layer 2+3 – main group (used for reflection) */
+  var grp=document.createElementNS(ns,'g'); grp.setAttribute('id','cpBldG2');
+
+  /* mid buildings – gradient fills + edge lighting + windows */
+  var mGrads=['cpBN','cpBY','cpBC','cpBR','cpBN','cpBY'];
+  var edgeCols=['#ffe600','#ff0055','#00ffcc','#ffe600','#ff0055'];
+  var mx2=0;
+  while(mx2<VW){
+    var mw=36+Math.random()*68,mh=52+Math.random()*118,myt=GY-mh;
+    var mg=mGrads[Math.floor(Math.random()*mGrads.length)];
+    grp.appendChild(el('rect',{x:mx2,y:myt,width:mw,height:mh,fill:'url(#'+mg+')'}));
+    /* edge accent light on some buildings */
+    if(Math.random()>.45){
+      var ec=edgeCols[Math.floor(Math.random()*edgeCols.length)];
+      var side=Math.random()>.5?mx2:mx2+mw-1.5;
+      grp.appendChild(el('rect',{x:side,y:myt,width:1.5,height:mh,fill:ec,opacity:(0.18+Math.random()*.22).toFixed(2)}));
+    }
+    /* windows */
+    var wR=Math.floor(mh/15),wC=Math.floor(mw/12);
+    for(var r=0;r<wR;r++) for(var c=0;c<wC;c++){
+      if(Math.random()>.55){
+        var wc2=Math.random()>.6?'#ffe600':(Math.random()>.5?'#ff0055':'#00ffcc');
+        grp.appendChild(el('rect',{x:mx2+4+c*12,y:myt+6+r*15,width:4,height:5,fill:wc2,opacity:(0.2+Math.random()*.4).toFixed(2)}));
       }
     }
-    // Antenna on tall buildings
-    if (bh>90 && Math.random()>0.45) {
-      var ax=x+bw/2, atop=by-15-Math.random()*25;
-      var ant=document.createElementNS(ns,'line');
-      ant.setAttribute('x1',ax); ant.setAttribute('y1',by); ant.setAttribute('x2',ax); ant.setAttribute('y2',atop);
-      ant.setAttribute('stroke','#ff0055'); ant.setAttribute('stroke-width','1'); ant.setAttribute('stroke-opacity','0.6');
-      svg.appendChild(ant);
-      var dot=document.createElementNS(ns,'circle');
-      dot.setAttribute('cx',ax); dot.setAttribute('cy',atop); dot.setAttribute('r','2'); dot.setAttribute('fill','#ff0055'); dot.setAttribute('opacity','0.85');
-      dot.setAttribute('filter','url(#cpGlow)');
-      svg.appendChild(dot);
-    }
-    // Neon sign stripe on some buildings
-    if (Math.random()>0.7 && bw>38) {
-      var sc=accentCols[Math.floor(Math.random()*accentCols.length)];
-      var sg=document.createElementNS(ns,'rect');
-      sg.setAttribute('x',x+4); sg.setAttribute('y',by+Math.floor(Math.random()*Math.max(10,bh*0.25)));
-      sg.setAttribute('width',bw-8); sg.setAttribute('height',2);
-      sg.setAttribute('fill',sc); sg.setAttribute('opacity','0.65'); sg.setAttribute('filter','url(#cpGlow)');
-      svg.appendChild(sg);
-    }
-    x += bw + 1 + Math.floor(Math.random()*4);
+    mx2+=mw+2+Math.random()*8;
   }
-  // Fade overlay at bottom
-  var ov=document.createElementNS(ns,'rect');
-  ov.setAttribute('x','0'); ov.setAttribute('y',VH*0.55); ov.setAttribute('width',VW); ov.setAttribute('height',VH*0.45);
-  ov.setAttribute('fill','url(#cpFade)');
-  svg.appendChild(ov);
+
+  /* hero cyan tower – center */
+  var hx=Math.round(VW*.42),hw=Math.round(VW*.1),hh=Math.round(GY*.93);
+  grp.appendChild(el('rect',{x:hx,y:GY-hh,width:hw,height:hh,fill:'url(#cpCyanG)'}));
+  /* left edge bright strip – creates lit-facade effect */
+  grp.appendChild(el('rect',{x:hx,y:GY-hh,width:3,height:hh,fill:'#00ffcc',opacity:'.55',filter:'url(#cpGlw)'}));
+  for(var fl=0;fl<22;fl++){var fy2=GY-hh+fl*(hh/24);grp.appendChild(el('line',{x1:hx,y1:fy2,x2:hx+hw,y2:fy2,stroke:'#00ffcc','stroke-width':'.5','stroke-opacity':'.2'}));}
+  for(var hr2=0;hr2<Math.floor(hh/14);hr2++) for(var hc2=0;hc2<Math.floor(hw/10);hc2++){
+    if(Math.random()>.44) grp.appendChild(el('rect',{x:hx+3+hc2*10,y:GY-hh+5+hr2*14,width:5,height:6,fill:'#aaffee',opacity:(0.12+Math.random()*.32).toFixed(2)}));
+  }
+
+  /* tall yellow tower – left */
+  var p1x=Math.round(VW*.22),p1w=Math.round(VW*.06),p1h=Math.round(GY*.81);
+  grp.appendChild(el('rect',{x:p1x,y:GY-p1h,width:p1w,height:p1h,fill:'url(#cpPurpG)'}));
+  grp.appendChild(el('rect',{x:p1x,y:GY-p1h,width:2,height:p1h,fill:'#ffe600',opacity:'.65',filter:'url(#cpGlw)'}));
+  grp.appendChild(el('rect',{x:p1x+p1w-1.5,y:GY-p1h,width:1.5,height:p1h,fill:'#ffe600',opacity:'.2'}));
+
+  /* red tapered tower – right */
+  var p2x=Math.round(VW*.73),p2w=Math.round(VW*.055),p2h=Math.round(GY*.68);
+  grp.appendChild(el('rect',{x:p2x,y:GY-p2h,width:p2w,height:p2h,fill:'url(#cpMagG)'}));
+  grp.appendChild(el('rect',{x:p2x+p2w-2,y:GY-p2h,width:2,height:p2h,fill:'#ff0055',opacity:'.55',filter:'url(#cpGlw)'}));
+  grp.appendChild(el('polygon',{points:(p2x+p2w/2)+','+(GY-p2h-24)+' '+p2x+','+(GY-p2h)+' '+(p2x+p2w)+','+(GY-p2h),fill:'#ff0055',opacity:'.7',filter:'url(#cpGlw)'}));
+
+  /* clock tower */
+  var ctx2=Math.round(VW*.34),ctw2=Math.round(VW*.035),cth2=Math.round(GY*.57);
+  grp.appendChild(el('rect',{x:ctx2,y:GY-cth2,width:ctw2,height:cth2,fill:'url(#cpBY)',stroke:'#ffe600','stroke-width':'1','stroke-opacity':'.5'}));
+  grp.appendChild(el('circle',{cx:ctx2+ctw2/2,cy:GY-cth2*.73,r:ctw2*.45,fill:'#ffe600',opacity:'.85',filter:'url(#cpGlwSoft)'}));
+
+  /* central antenna */
+  var antX=Math.round(VW*.505),antH=Math.round(GY*.87);
+  grp.appendChild(el('line',{x1:antX,y1:GY,x2:antX,y2:GY-antH,stroke:'#00ffcc','stroke-width':'1.5',opacity:'.45'}));
+  grp.appendChild(el('circle',{cx:antX,cy:GY-antH,r:4,fill:'#ff0055',filter:'url(#cpGlwSoft)'}));
+
+  /* accent fg buildings – gradient fill + edge light */
+  [{x:VW*.07,w:VW*.07,h:GY*.47,g:'cpBY',s:'#ffe600'},{x:VW*.14,w:VW*.05,h:GY*.33,g:'cpBR',s:'#ff0055'},
+   {x:VW*.62,w:VW*.08,h:GY*.59,g:'cpBC',s:'#00ffcc'},{x:VW*.81,w:VW*.06,h:GY*.49,g:'cpBY',s:'#ffe600'},
+   {x:VW*.895,w:VW*.05,h:GY*.37,g:'cpBR',s:'#ff0055'}].forEach(function(a){
+    grp.appendChild(el('rect',{x:a.x,y:GY-a.h,width:a.w,height:a.h,fill:'url(#'+a.g+')'}));
+    /* edge light */
+    grp.appendChild(el('rect',{x:a.x,y:GY-a.h,width:1.5,height:a.h,fill:a.s,opacity:'.3'}));
+    /* top edge */
+    grp.appendChild(el('rect',{x:a.x,y:GY-a.h,width:a.w,height:1.5,fill:a.s,opacity:'.3'}));
+    var fR=Math.floor(a.h/16),fC=Math.floor(a.w/13);
+    for(var fr=0;fr<fR;fr++) for(var fc=0;fc<fC;fc++){
+      if(Math.random()>.5) grp.appendChild(el('rect',{x:a.x+4+fc*13,y:GY-a.h+6+fr*16,width:4,height:5,fill:a.s,opacity:(0.15+Math.random()*.35).toFixed(2)}));
+    }
+  });
+
+  /* trees */
+  [VW*.54,VW*.57,VW*.60,VW*.63,VW*.66].forEach(function(tx){
+    var th2=17+Math.random()*14,tw2=8+Math.random()*7;
+    grp.appendChild(el('ellipse',{cx:tx,cy:GY-th2/2,rx:tw2/2,ry:th2/2,fill:'#040007'}));
+    grp.appendChild(el('rect',{x:tx-1,y:GY-4,width:2,height:5,fill:'#040007'}));
+  });
+
+  svg.appendChild(grp);
+
+  /* ground line */
+  svg.appendChild(el('line',{x1:0,y1:GY,x2:VW,y2:GY,stroke:'#ffe600','stroke-width':'1','stroke-opacity':'.4'}));
+
+  /* water background */
+  svg.appendChild(el('rect',{x:0,y:GY,width:VW,height:VH-GY,fill:'url(#cpWaterG)'}));
+
+  /* reflection – flip bldG2 around GY */
+  var refG=document.createElementNS(ns,'g');
+  refG.setAttribute('transform','translate(0,'+(GY*2)+') scale(1,-1)');
+  refG.setAttribute('opacity','.26');
+  var useEl=document.createElementNS(ns,'use');
+  useEl.setAttribute('href','#cpBldG2');
+  useEl.setAttributeNS('http://www.w3.org/1999/xlink','href','#cpBldG2');
+  refG.appendChild(useEl);
+  svg.appendChild(refG);
+
+  /* water fade + ripples */
+  svg.appendChild(el('rect',{x:0,y:GY,width:VW,height:VH-GY,fill:'url(#cpWFade)'}));
+  for(var ri=0;ri<8;ri++){
+    var ry2=GY+7+ri*((VH-GY-14)/8);
+    svg.appendChild(el('line',{x1:VW*.04+Math.random()*VW*.12,y1:ry2,x2:VW*.78+Math.random()*VW*.18,y2:ry2,stroke:'#ffe600','stroke-width':'.4',opacity:(0.1-ri*0.01).toFixed(3)}));
+  }
 
   container.innerHTML = '';
   container.appendChild(svg);
