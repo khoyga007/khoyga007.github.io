@@ -215,6 +215,55 @@
   text-shadow: 0 0 8px #00ffcc66;
 }
 
+/* ── Cyberpunk: unique per-widget HUD frame shapes ── */
+[data-theme="cyberpunk"] .weather-widget {
+  clip-path: polygon(0 30px, 30px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .links-widget {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 24px 100%, 0 calc(100% - 24px));
+}
+[data-theme="cyberpunk"] .todo-widget {
+  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .notes-widget {
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .pomodoro-widget {
+  clip-path: polygon(0 28px, 28px 0, 100% 0, 100% 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .habit-widget {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .calendar-widget {
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+[data-theme="cyberpunk"] .translator-widget {
+  clip-path: polygon(0 16px, 16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+}
+[data-theme="cyberpunk"] .crypto-widget {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 28px 100%, 0 calc(100% - 28px));
+}
+[data-theme="cyberpunk"] .youtube-widget {
+  clip-path: polygon(0 20px, 20px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px));
+}
+
+/* ── Cyberpunk: widget icon overrides ── */
+[data-theme="cyberpunk"] .widget-icon { font-size: 0; }
+[data-theme="cyberpunk"] .widget-icon::after {
+  font-size: 1rem; font-family: monospace;
+  color: #00ffcc; text-shadow: 0 0 8px #00ffcc88;
+}
+[data-theme="cyberpunk"] .weather-widget    .widget-icon::after { content: '⊛'; }
+[data-theme="cyberpunk"] .links-widget      .widget-icon::after { content: '⊕'; }
+[data-theme="cyberpunk"] .todo-widget       .widget-icon::after { content: '▷'; }
+[data-theme="cyberpunk"] .notes-widget      .widget-icon::after { content: '≡'; }
+[data-theme="cyberpunk"] .pomodoro-widget   .widget-icon::after { content: '◎'; }
+[data-theme="cyberpunk"] .habit-widget      .widget-icon::after { content: '◆'; }
+[data-theme="cyberpunk"] .calendar-widget   .widget-icon::after { content: '▦'; }
+[data-theme="cyberpunk"] .translator-widget .widget-icon::after { content: '⇌'; }
+[data-theme="cyberpunk"] .crypto-widget     .widget-icon::after { content: '◈'; }
+[data-theme="cyberpunk"] .youtube-widget    .widget-icon::after { content: '♪'; }
+
 /* ── Cyberpunk: Weather Hologram HUD ── */
 [data-theme="cyberpunk"] .weather-main { position: relative; padding: 14px 0; }
 
