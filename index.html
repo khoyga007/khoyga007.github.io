@@ -147,20 +147,68 @@
   50% { opacity:0.15; transform:translate(-50%,-50%) scale(1.12); }
 }
 
-/* ── Cyberpunk: global widget glassmorphism ── */
+/* ── Cyberpunk: HUD widget frames ── */
 [data-theme="cyberpunk"] .widget {
-  background: rgba(8,8,8,0.48);
-  backdrop-filter: blur(18px) saturate(1.3);
-  border-color: rgba(0,255,204,0.18);
-  box-shadow: 0 0 24px rgba(0,255,204,0.04), inset 0 0 40px rgba(0,0,0,0.25);
+  background: rgba(5,10,20,0.62);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(0,255,204,0.45);
+  border-radius: 0;
+  clip-path: polygon(
+    0 16px, 16px 0,
+    calc(100% - 16px) 0, 100% 16px,
+    100% calc(100% - 16px), calc(100% - 16px) 100%,
+    16px 100%, 0 calc(100% - 16px)
+  );
+  filter: drop-shadow(0 0 8px rgba(0,255,204,0.28)) drop-shadow(0 0 2px rgba(0,255,204,0.65));
+  position: relative;
+  overflow: hidden;
 }
 [data-theme="cyberpunk"] .widget:hover {
-  border-color: rgba(0,255,204,0.4);
-  box-shadow: 0 0 32px rgba(0,255,204,0.1), inset 0 0 40px rgba(0,0,0,0.25);
+  border-color: rgba(0,255,204,0.75);
+  filter: drop-shadow(0 0 14px rgba(0,255,204,0.45)) drop-shadow(0 0 3px rgba(0,255,204,0.9));
 }
+/* corner tick marks */
+[data-theme="cyberpunk"] .widget::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  background:
+    linear-gradient(#00ffcc,#00ffcc) 16px 8px / 20px 1px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) 8px 16px / 1px 20px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) calc(100% - 36px) 8px / 20px 1px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) calc(100% - 9px) 16px / 1px 20px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) 16px calc(100% - 9px) / 20px 1px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) 8px calc(100% - 36px) / 1px 20px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) calc(100% - 36px) calc(100% - 9px) / 20px 1px no-repeat,
+    linear-gradient(#00ffcc,#00ffcc) calc(100% - 9px) calc(100% - 36px) / 1px 20px no-repeat;
+  opacity: 0.55;
+}
+/* top centre accent bar */
+[data-theme="cyberpunk"] .widget::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 22%; right: 22%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #00ffccaa, #00ffcc, #00ffccaa, transparent);
+  pointer-events: none;
+  z-index: 101;
+}
+/* header */
 [data-theme="cyberpunk"] .widget-header {
-  background: rgba(0,255,204,0.04);
-  border-bottom-color: rgba(0,255,204,0.12);
+  background: linear-gradient(to right, rgba(0,255,204,0.12), rgba(0,255,204,0.04), transparent);
+  border-bottom: 1px solid rgba(0,255,204,0.22);
+  position: relative;
+  padding-left: 20px;
+}
+[data-theme="cyberpunk"] .widget-header::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #00ffcc, #00ffcc88, transparent);
+  box-shadow: 0 0 6px #00ffcc, 0 0 14px #00ffcc55;
 }
 [data-theme="cyberpunk"] .widget-header h3 {
   color: #00ffcc; letter-spacing: 3px;
