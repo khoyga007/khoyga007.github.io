@@ -2868,6 +2868,10 @@ renderPlaylist();
 var ambCtx = null, ambSource = null, ambGain = null, ambActive = null;
 var ambAnalyser = null, ambVizRaf = null;
 
+function getThemeColor(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+
 function startViz() {
   var canvas = document.getElementById('ambViz');
   if (!canvas || !ambAnalyser) return;
@@ -2882,16 +2886,18 @@ function startViz() {
     ambAnalyser.getByteFrequencyData(data);
     ctx.clearRect(0, 0, W, H);
     var barW = Math.floor(W / bars) - 2;
+    var color = getThemeColor('--cyan');
     for (var i = 0; i < bars; i++) {
       var idx = Math.floor(i * data.length / bars / 3);
       var v = data[idx] / 255;
       var barH = Math.max(2, v * H);
-      var hue = 180 + i * 8;
-      ctx.fillStyle = 'hsl(' + hue + ',100%,' + (50 + v * 30) + '%)';
-      ctx.shadowColor = 'hsl(' + hue + ',100%,70%)';
-      ctx.shadowBlur = 4;
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.5 + v * 0.5;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
       ctx.fillRect(i * (barW + 2), H - barH, barW, barH);
     }
+    ctx.globalAlpha = 1;
   }
   draw();
 }
@@ -3050,15 +3056,17 @@ function startYtViz() {
       ytVizVals[i] += (ytVizTargets[i] - ytVizVals[i]) * 0.12;
     }
     ctx.clearRect(0, 0, W, H);
+    var color = getThemeColor('--magenta');
     for (var j = 0; j < ytVizBars; j++) {
       var v = ytVizVals[j];
       var barH = Math.max(2, v * H);
-      var hue = 300 + j * 2; // magenta/pink range
-      ctx.fillStyle = 'hsl(' + hue + ',100%,' + (50 + v * 30) + '%)';
-      ctx.shadowColor = 'hsl(' + hue + ',100%,70%)';
-      ctx.shadowBlur = 5;
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.4 + v * 0.6;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
       ctx.fillRect(j * (barW + 1), H - barH, barW, barH);
     }
+    ctx.globalAlpha = 1;
   }
   tick();
 }
