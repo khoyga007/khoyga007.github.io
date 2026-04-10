@@ -679,16 +679,100 @@ body::before {
 .clock { animation: pulse-glow 3s ease-in-out infinite; }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.widget { animation: fadeIn 0.4s ease both; }
+.widget { animation: fadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .weather-widget { animation-delay: 0.05s; }
-.links-widget   { animation-delay: 0.1s; }
-.todo-widget    { animation-delay: 0.15s; }
-.notes-widget   { animation-delay: 0.2s; }
-.youtube-widget { animation-delay: 0.25s; }
+.links-widget   { animation-delay: 0.12s; }
+.todo-widget    { animation-delay: 0.19s; }
+.notes-widget   { animation-delay: 0.26s; }
+.youtube-widget { animation-delay: 0.33s; }
+
+/* ── SKELETON LOADER ── */
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(0,240,255,0.04) 25%,
+    rgba(0,240,255,0.10) 50%,
+    rgba(0,240,255,0.04) 75%
+  );
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+  border-radius: 6px;
+}
+
+.skeleton-weather {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0;
+}
+
+.skeleton-circle {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+}
+
+/* ── TODO SLIDE ANIMATIONS ── */
+@keyframes todoSlideIn {
+  from { opacity: 0; transform: translateX(-16px); max-height: 0; margin-bottom: 0; }
+  to   { opacity: 1; transform: translateX(0);     max-height: 80px; margin-bottom: 0; }
+}
+
+@keyframes todoSlideOut {
+  from { opacity: 1; transform: translateX(0);     max-height: 80px; }
+  to   { opacity: 0; transform: translateX(16px);  max-height: 0; padding: 0; }
+}
+
+.todo-item.entering {
+  animation: todoSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.todo-item.leaving {
+  animation: todoSlideOut 0.22s ease-in both;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── MODAL SLIDE UP ── */
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.modal-overlay.show .modal {
+  animation: modalSlideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── RIPPLE ── */
+.ripple-host { position: relative; overflow: hidden; }
+
+@keyframes ripple-expand {
+  from { transform: scale(0); opacity: 0.5; }
+  to   { transform: scale(4); opacity: 0; }
+}
+
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  width: 80px; height: 80px;
+  margin-top: -40px; margin-left: -40px;
+  background: rgba(0, 240, 255, 0.35);
+  pointer-events: none;
+  animation: ripple-expand 0.55s ease-out forwards;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1000px) {

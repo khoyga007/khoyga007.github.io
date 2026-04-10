@@ -1069,6 +1069,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
               <button onclick="loadYT()">&#9654; Phát</button>
             </div>
             <div id="yt-frame-container"></div>
+            <canvas id="ytViz" width="0" height="28" style="display:none;width:100%;border-radius:0 0 10px 10px;margin-top:-4px;"></canvas>
             <div class="ambient-row">
               <div class="ambient-label">🎧 Ambient Sounds</div>
               <div class="ambient-btns">
@@ -1082,6 +1083,7 @@ body::before { content: ''; position: fixed; inset: 0; background: var(--bg-grad
                 <button class="ambient-btn" id="amb-train" onclick="toggleAmbient('train')">🚂 Tàu</button>
                 <button class="ambient-btn" id="amb-white" onclick="toggleAmbient('white')">📻 Trắng</button>
                 <input type="range" class="ambient-vol" id="ambientVol" min="0" max="100" value="40" oninput="setAmbientVol(this.value)" title="Âm lượng">
+                <canvas id="ambViz" width="64" height="24" style="display:none;border-radius:4px;opacity:0.85;align-self:center;"></canvas>
               </div>
             </div>
           </div>
@@ -2362,7 +2364,7 @@ function fetchWeatherByCoords(lat, lon, locationName) {
 
 function loadWeather() {
   var body = document.getElementById('weatherBody');
-  body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:13px;">Đang tải...</div>';
+  body.innerHTML = '<div class="skeleton-weather"><div class="skeleton skeleton-circle"></div><div class="skeleton skeleton-line" style="width:80px"></div><div class="skeleton skeleton-line" style="width:120px"></div><div class="skeleton skeleton-line" style="width:100px"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px"><div class="skeleton skeleton-line" style="height:52px;border-radius:8px"></div><div class="skeleton skeleton-line" style="height:52px;border-radius:8px"></div></div>';
   try {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -2524,14 +2526,23 @@ function addTodo() {
   var input = document.getElementById('todoInput');
   var text = input.value.trim(); if (!text) return;
   var todos = getTodos(); todos.unshift({ text: text, done: false });
-  saveTodos(todos); renderTodos(); input.value = '';
+  saveTodos(todos); renderTodos();
+  var first = document.querySelector('#todoList .todo-item');
+  if (first) first.classList.add('entering');
+  input.value = '';
 }
 
 function toggleTodo(i) {
   var todos = getTodos(); todos[i].done = !todos[i].done; saveTodos(todos); renderTodos();
 }
 function deleteTodo(i) {
-  var todos = getTodos(); todos.splice(i, 1); saveTodos(todos); renderTodos();
+  var items = document.querySelectorAll('#todoList .todo-item');
+  if (items[i]) {
+    items[i].classList.add('leaving');
+    items[i].addEventListener('animationend', function() {
+      var todos = getTodos(); todos.splice(i, 1); saveTodos(todos); renderTodos();
+    }, { once: true });
+  }
 }
 
 document.getElementById('todoInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') addTodo(); });
@@ -2817,10 +2828,12 @@ async function loadYT() {
 
 function playVideo(idx) {
   if (idx < 0 || idx >= playlist.length) return;
+  stopYtViz();
   currentIdx = idx;
   document.getElementById('yt-frame-container').innerHTML =
     '<iframe src="https://www.youtube.com/embed/' + playlist[idx].id + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
   renderPlaylist();
+  setTimeout(startYtViz, 800);
 }
 
 function renderPlaylist() {
@@ -2836,7 +2849,7 @@ function renderPlaylist() {
 
 function removeFromPlaylist(e, i) {
   e.stopPropagation(); playlist.splice(i, 1);
-  if (currentIdx === i) { currentIdx = -1; document.getElementById('yt-frame-container').innerHTML = ''; }
+  if (currentIdx === i) { currentIdx = -1; document.getElementById('yt-frame-container').innerHTML = ''; stopYtViz(); }
   else if (currentIdx > i) currentIdx--;
   savePlaylist(); renderPlaylist();
 }
@@ -2844,7 +2857,7 @@ function removeFromPlaylist(e, i) {
 function clearPlaylist() {
   if (!confirm('Xóa toàn bộ playlist?')) return;
   playlist = []; currentIdx = -1;
-  document.getElementById('yt-frame-container').innerHTML = '';
+  document.getElementById('yt-frame-container').innerHTML = ''; stopYtViz();
   savePlaylist(); renderPlaylist();
 }
 
@@ -2853,6 +2866,44 @@ renderPlaylist();
 
 // ── AMBIENT SOUNDS ──
 var ambCtx = null, ambSource = null, ambGain = null, ambActive = null;
+var ambAnalyser = null, ambVizRaf = null;
+
+function startViz() {
+  var canvas = document.getElementById('ambViz');
+  if (!canvas || !ambAnalyser) return;
+  canvas.style.display = 'block';
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var bars = 12;
+  var data = new Uint8Array(ambAnalyser.frequencyBinCount);
+
+  function draw() {
+    ambVizRaf = requestAnimationFrame(draw);
+    ambAnalyser.getByteFrequencyData(data);
+    ctx.clearRect(0, 0, W, H);
+    var barW = Math.floor(W / bars) - 2;
+    for (var i = 0; i < bars; i++) {
+      var idx = Math.floor(i * data.length / bars / 3);
+      var v = data[idx] / 255;
+      var barH = Math.max(2, v * H);
+      var hue = 180 + i * 8;
+      ctx.fillStyle = 'hsl(' + hue + ',100%,' + (50 + v * 30) + '%)';
+      ctx.shadowColor = 'hsl(' + hue + ',100%,70%)';
+      ctx.shadowBlur = 4;
+      ctx.fillRect(i * (barW + 2), H - barH, barW, barH);
+    }
+  }
+  draw();
+}
+
+function stopViz() {
+  if (ambVizRaf) { cancelAnimationFrame(ambVizRaf); ambVizRaf = null; }
+  var canvas = document.getElementById('ambViz');
+  if (canvas) {
+    canvas.style.display = 'none';
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
 
 function buildNoise(type) {
   if (!ambCtx) ambCtx = new AudioContext();
@@ -2881,6 +2932,7 @@ function stopAmbient() {
   document.querySelectorAll('.ambient-btn').forEach(function(b) { b.classList.remove('active'); });
   ambActive = null;
   _FX.setAmbient(null);
+  stopViz();
 }
 
 function toggleAmbient(type) {
@@ -2952,14 +3004,73 @@ function toggleAmbient(type) {
     ambSource.connect(ambGain);
   }
 
+  // Analyser for visualizer
+  ambAnalyser = ambCtx.createAnalyser();
+  ambAnalyser.fftSize = 64;
+  ambGain.connect(ambAnalyser);
+
   ambSource.start();
   ambActive = type;
   document.getElementById('amb-' + type).classList.add('active');
   _FX.setAmbient(type);
+  startViz();
 }
 
 function setAmbientVol(val) {
   if (ambGain) ambGain.gain.value = (val / 100) * 0.6;
+}
+
+// ── YOUTUBE VISUALIZER ──
+var ytVizRaf = null;
+var ytVizBars = 32;
+var ytVizVals = [];
+var ytVizTargets = [];
+for (var _i = 0; _i < ytVizBars; _i++) { ytVizVals.push(0); ytVizTargets.push(0); }
+
+function startYtViz() {
+  var canvas = document.getElementById('ytViz');
+  if (!canvas) return;
+  var container = document.getElementById('yt-frame-container');
+  canvas.width = container.offsetWidth || 640;
+  canvas.style.display = 'block';
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var barW = Math.floor(W / ytVizBars) - 1;
+
+  function tick() {
+    ytVizRaf = requestAnimationFrame(tick);
+    // Update targets randomly every ~20 frames feel
+    for (var i = 0; i < ytVizBars; i++) {
+      if (Math.random() < 0.08) {
+        // Music-like: center bands louder
+        var center = 1 - Math.abs(i / ytVizBars - 0.35) * 1.4;
+        ytVizTargets[i] = Math.max(0.05, Math.random() * Math.max(0.1, center));
+      }
+      // Smooth toward target
+      ytVizVals[i] += (ytVizTargets[i] - ytVizVals[i]) * 0.12;
+    }
+    ctx.clearRect(0, 0, W, H);
+    for (var j = 0; j < ytVizBars; j++) {
+      var v = ytVizVals[j];
+      var barH = Math.max(2, v * H);
+      var hue = 300 + j * 2; // magenta/pink range
+      ctx.fillStyle = 'hsl(' + hue + ',100%,' + (50 + v * 30) + '%)';
+      ctx.shadowColor = 'hsl(' + hue + ',100%,70%)';
+      ctx.shadowBlur = 5;
+      ctx.fillRect(j * (barW + 1), H - barH, barW, barH);
+    }
+  }
+  tick();
+}
+
+function stopYtViz() {
+  if (ytVizRaf) { cancelAnimationFrame(ytVizRaf); ytVizRaf = null; }
+  var canvas = document.getElementById('ytViz');
+  if (canvas) {
+    canvas.style.display = 'none';
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  }
+  for (var i = 0; i < ytVizBars; i++) { ytVizVals[i] = 0; ytVizTargets[i] = 0; }
 }
 
 // ── CRYPTO ──
@@ -3471,6 +3582,21 @@ function initCyberpunkSkyline() {
 })();
 
 applyLayout();
+
+// ── RIPPLE ──
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button');
+  if (!btn) return;
+  btn.style.position = btn.style.position || 'relative';
+  btn.style.overflow = 'hidden';
+  var wave = document.createElement('span');
+  wave.className = 'ripple-wave';
+  var rect = btn.getBoundingClientRect();
+  wave.style.top  = (e.clientY - rect.top)  + 'px';
+  wave.style.left = (e.clientX - rect.left) + 'px';
+  btn.appendChild(wave);
+  wave.addEventListener('animationend', function() { wave.remove(); }, { once: true });
+});
 
 // ── UTIL ──
 function escHtml(s) {

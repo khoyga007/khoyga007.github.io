@@ -39,6 +39,19 @@ document.getElementById('searchInput').addEventListener('keydown', e => {
 // ── WEATHER ──
 async function loadWeather() {
   const body = document.getElementById('weatherBody');
+  // Skeleton loader
+  body.innerHTML = `
+    <div class="skeleton-weather">
+      <div class="skeleton skeleton-circle"></div>
+      <div class="skeleton skeleton-line" style="width:80px"></div>
+      <div class="skeleton skeleton-line" style="width:120px"></div>
+      <div class="skeleton skeleton-line" style="width:100px"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+      <div class="skeleton skeleton-line" style="height:52px;border-radius:8px"></div>
+      <div class="skeleton skeleton-line" style="height:52px;border-radius:8px"></div>
+    </div>
+  `;
   try {
     // Get location
     const locRes = await fetch('https://ipapi.co/json/');
@@ -228,6 +241,9 @@ function addTodo() {
   todos.unshift({ text, done: false });
   saveTodos(todos);
   renderTodos();
+  // Animate first item (just added)
+  const first = document.querySelector('#todoList .todo-item');
+  if (first) first.classList.add('entering');
   input.value = '';
 }
 
@@ -239,10 +255,17 @@ function toggleTodo(i) {
 }
 
 function deleteTodo(i) {
-  const todos = getTodos();
-  todos.splice(i, 1);
-  saveTodos(todos);
-  renderTodos();
+  const list = document.getElementById('todoList');
+  const items = list.querySelectorAll('.todo-item');
+  if (items[i]) {
+    items[i].classList.add('leaving');
+    items[i].addEventListener('animationend', () => {
+      const todos = getTodos();
+      todos.splice(i, 1);
+      saveTodos(todos);
+      renderTodos();
+    }, { once: true });
+  }
 }
 
 document.getElementById('todoInput').addEventListener('keydown', e => {
@@ -390,3 +413,20 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ── RIPPLE EFFECT ──
+function addRipple(e) {
+  const btn = e.currentTarget;
+  btn.classList.add('ripple-host');
+  const wave = document.createElement('span');
+  wave.className = 'ripple-wave';
+  const rect = btn.getBoundingClientRect();
+  wave.style.top  = (e.clientY - rect.top)  + 'px';
+  wave.style.left = (e.clientX - rect.left) + 'px';
+  btn.appendChild(wave);
+  wave.addEventListener('animationend', () => wave.remove(), { once: true });
+}
+
+document.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', addRipple);
+});
